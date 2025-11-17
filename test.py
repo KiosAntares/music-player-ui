@@ -1,0 +1,88 @@
+import pygame
+from pygame.locals import *
+from window import Window
+from grid import Grid
+from app import App
+from colors import Colors
+from player import PlayerStatus
+from textwindow import TextWindow   
+
+import requests
+from io import BytesIO
+
+
+# MARGINS and GAPS:
+# TOP, BOTTOM, LEFT, RIGHT
+
+# SIZE/COORDINATE order:
+# Width (x), Height (y)
+
+# Grid slots:
+# Column, Row
+
+def get_image(url):
+    img = requests.get(url)
+    img = pygame.image.load(BytesIO(img.content))
+    return img
+
+class Current_Song(Window):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.art_source = None
+        self._img = None
+
+    def on_loop(self):
+        super().on_loop()
+        art_source = PlayerStatus.get_art_url(PlayerStatus.get_full_status())
+        if (art_source != self.art_source):
+            print(f"DEBUG: fetching image {art_source}")
+            self.art_source = art_source
+            img = get_image(art_source)
+            self._img = pygame.transform.smoothscale(img, self.size)
+
+    def on_render(self):
+        if self._img:
+            self._surface.blit(self._img, (0,0))
+        super().on_render()
+
+
+class Square(Window):
+    bg = (100,100,100)
+    def on_render(self):
+        self._surface.fill(self.bg)
+        super().on_render()
+
+if __name__ == '__main__':
+
+    pygame.font.init()
+    mainfont = pygame.font.SysFont('CaskaydiaCove Nerd Font', 30)
+
+    app = App()
+    grid = Grid(app, (20,20), (400, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
+    slots = grid.get_usable_slot_size()
+    artwork = Current_Song(grid, None, slots)
+    tw, th = slots
+    subgrid = Grid(grid, None, (tw*2, th), (1, 2), margin = (10,10,10,10), gap=(5,5,5,5))
+
+    text1 = TextWindow(subgrid, None, subgrid.get_usable_slot_size(), 
+                     "Now playing:", mainfont, Colors.fg, margin=(20,20,5,5))
+
+
+    text2 = TextWindow(subgrid, None, subgrid.get_usable_slot_size(), 
+                     "", mainfont, Colors.fg, margin=(20,20,5,5))
+
+    text2.text_update_fn = lambda:\
+        PlayerStatus.get_song_title(PlayerStatus.get_full_status())
+
+    #subq = Square(subgrid, None, subgrid.get_usable_slot_size())
+    #subq.bg = (0,255,0)
+    #subq2 = Square(subgrid, None, subgrid.get_usable_slot_size())
+    #subq2.bg = (255,0,0)
+
+    sq3 = Square(grid, None, slots)
+    grid.register_child(artwork, slot=(0,0))
+    grid.register_child(subgrid, slot=(0,1))
+    grid.register_child(sq3, slot=(1,0))
+    subgrid.register_child(text1, slot=(0,0))
+    subgrid.register_child(text2, slot=(0,1))
+    app.run()
