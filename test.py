@@ -1,15 +1,19 @@
 import pygame
 from pygame.locals import *
+from jellyfin_player import Jellyfin
 from window import Window
 from grid import Grid
 from app import App
 from colors import Colors
 from playerctl import Playerctl
+from jellyfin_player import Jellyfin
 from textwindow import TextWindow
 
 import requests
 from io import BytesIO
 import datetime
+import dotenv
+import os
 
 
 # MARGINS and GAPS:
@@ -22,8 +26,8 @@ import datetime
 # Column, Row
 
 def get_image(url):
-    img = requests.get(url)
-    img = pygame.image.load(BytesIO(img.content))
+    img = requests.get(url).content
+    img = pygame.image.load(BytesIO(img)).convert()
     return img
 
 class Current_Song(Window):
@@ -31,10 +35,11 @@ class Current_Song(Window):
         super().__init__(*args, **kwargs)
         self.art_source = None
         self._img = None
+        self.player = None
 
     def on_loop(self):
         super().on_loop()
-        art_source = Playerctl.currently_playing().get('artUrl')
+        art_source = self.player.currently_playing().get('artUrl')
         if (art_source != self.art_source):
             print(f"DEBUG: fetching image {art_source}")
             self.art_source = art_source
@@ -55,15 +60,19 @@ class Square(Window):
         super().on_render()
 
 if __name__ == '__main__':
-
+    dotenv.load_dotenv()
     pygame.font.init()
     mainfont = pygame.font.SysFont('CaskaydiaCove Nerd Font', 30)
 
     app = App((640, 480))
 
+    # player = Playerctl()
+    player = Jellyfin(os.getenv('JELLYFIN_URL'), os.getenv('JELLYFIN_API_KEY'), '')
+
     grid = Grid(app, (20,20), (600, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
     slots = grid.get_usable_slot_size()
     artwork = Current_Song(grid, None, slots)
+    artwork.player = player
     tw, th = slots
     subgrid = Grid(grid, None, (tw*2, th), (1, 2), margin = (10,10,10,10), gap=(5,5,5,5))
 
@@ -74,8 +83,9 @@ if __name__ == '__main__':
     text2 = TextWindow(subgrid, None, subgrid.get_usable_slot_size(), 
                      "", mainfont, Colors.fg, margin=(20,20,5,5))
 
-    text2.text_update_fn = lambda:\
-        Playerctl.currently_playing().get('title')
+    f = lambda: f"{player.currently_playing().get('title')} on {player.currently_playing().get('device')}"
+    text2.text_update_fn = lambda: f()
+        
 
     #subq = Square(subgrid, None, subgrid.get_usable_slot_size())
     #subq.bg = (0,255,0)

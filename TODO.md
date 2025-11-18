@@ -13,4 +13,4 @@
 ## Player Library
 - [x] Refactor "Player" as generic interface
 - [x] Impl. "PlayerCtl" player class
-- [ ] Impl. "Jellyfin" player class
+- [x] Impl. "Jellyfin" player class
