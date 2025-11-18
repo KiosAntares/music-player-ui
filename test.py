@@ -1,6 +1,5 @@
 import pygame
 from pygame.locals import *
-from multilinetextwindow import MultiLineTextWindow
 from window import Window
 from grid import Grid
 from app import App
@@ -81,7 +80,7 @@ if __name__ == '__main__':
     #subq2.bg = (255,0,0)
     # sq3 = Square(grid, None, slots)
 
-    textML = MultiLineTextWindowTextWindow(grid, None, slots,
+    textML = TextWindow(grid, None, slots,
                                  "This is \na multiline text", mainfont, Colors.fg, margin=(5,5,5,5))
 
     grid.register_child(artwork, slot=(0,0))
