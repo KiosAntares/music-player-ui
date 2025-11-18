@@ -66,8 +66,8 @@ if __name__ == '__main__':
 
     app = App((640, 480))
 
-    # player = Playerctl()
-    player = Jellyfin(os.getenv('JELLYFIN_URL'), os.getenv('JELLYFIN_API_KEY'), '')
+    player = Playerctl()
+    # player = Jellyfin(os.getenv('JELLYFIN_URL'), os.getenv('JELLYFIN_API_KEY'), '')
 
     grid = Grid(app, (20,20), (600, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
     slots = grid.get_usable_slot_size()

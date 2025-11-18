@@ -4,8 +4,7 @@ from player import Player
 from os_utils import run_cmd
 
 class Playerctl(Player):
-    @staticmethod
-    def get_all_players():
+    def get_all_players(self):
         players, error = run_cmd('playerctl', '-l')
         if error == 'No players found':
             return {}
@@ -15,9 +14,8 @@ class Playerctl(Player):
             statuses[player] = status.strip()
         return statuses
 
-    @staticmethod 
-    def currently_playing() -> dict:
-        metadata = Playerctl._get_metadata() or {}
+    def currently_playing(self) -> dict:
+        metadata = self._get_metadata() or {}
         return {
             'status': 'Playing', # TODO: no
             'duration': metadata.get('mpris:length', 0),
@@ -29,17 +27,15 @@ class Playerctl(Player):
             'artUrl': metadata.get('mpris:artUrl')
         }
 
-    @staticmethod
-    def currently_playing_players():
-        player_statuses = Playerctl.get_all_players()
+    def currently_playing_players(self):
+        player_statuses = self.get_all_players()
         for player, status in player_statuses.items():
             if status == 'Playing':
                 return player
         return None
 
-    @staticmethod
-    def _get_metadata() -> dict:
-        current_player = Playerctl.currently_playing_players()
+    def _get_metadata(self) -> dict:
+        current_player = self.currently_playing_players()
         if not current_player:
             return {}
         metadata, error = run_cmd('playerctl', 'metadata', '-p', current_player)
