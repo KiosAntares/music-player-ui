@@ -12,5 +12,9 @@
 - [ ] Image Window, with stretching rules
 ## Player Library
 - [x] Refactor "Player" as generic interface
+- [x] Refactor "Player" from static to better align interface
+- [x] Add stubs to "Player" for play control
 - [x] Impl. "PlayerCtl" player class
 - [x] Impl. "Jellyfin" player class
+- [ ] Implement "PlayerCtl" play controls
+- [ ] Implement "Jellyfin" play controls
