@@ -8,21 +8,23 @@ class PlayerStatus:
         res = subprocess.run(cmd, capture_output=True, text=True)
         out = res.stdout
         err = res.stderr
-        # code = res.returncode
+        code = res.returncode
 
-        if err: 
-            print(f"[ERROR] Command {cmd} failed with error {err}")
-            exit(1)
+        # if err: 
+        #     print(f"[ERROR] Command {cmd} failed with error {err}: code {code}")
+        #     exit(1)
 
-        return out
+        return out, err
 
     @staticmethod
     def get_all_players():
-        players = PlayerStatus.run_cmd('playerctl', '-l').splitlines()
+        players, error = PlayerStatus.run_cmd('playerctl', '-l')
+        if error == 'No players found':
+            return {}
         statuses = {}
-        for player in players:
-            status = PlayerStatus.run_cmd('playerctl', 'status', '-p', player).strip()
-            statuses[player] = status
+        for player in players.splitlines():
+            status, error = PlayerStatus.run_cmd('playerctl', 'status', '-p', player)
+            statuses[player] = status.strip()
         return statuses
 
     @staticmethod
@@ -38,16 +40,16 @@ class PlayerStatus:
         current_player = PlayerStatus.currently_playing()
         if not current_player:
             return None
-        metadata = PlayerStatus.run_cmd('playerctl', 'metadata', '-p', current_player)
+        metadata, error = PlayerStatus.run_cmd('playerctl', 'metadata', '-p', current_player)
         metadata = [re.split(r'\s{1,}', line) for line in metadata.splitlines()]
-        metadata = {key: value for [_,key,value,*_] in metadata}
+        metadata = {key: ' '.join(value) for [_,key,*value] in metadata}
         return metadata
 
     @staticmethod
     def get_art_url(metadata):
-        if not metadata:
+        if not metadata or 'mpris:artUrl' not in metadata:
             return None
-        return metadata['mpris:artUrl']
+        return metadata['mpris:artUrl'] 
     
     @staticmethod
     def get_song_title(metadata):
