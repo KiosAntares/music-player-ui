@@ -4,10 +4,10 @@ from colors import Colors
 
 # The specialization of App is particularly intense
 class App(Window):
-    def __init__(self):
+    def __init__(self, size):
         self._running = True
         self._surface= None
-        self.size = self.width, self.height = 480, 480
+        self.size = self.width, self.height = size
         self.framerate = 1
         self._children = []
         self._clock = None

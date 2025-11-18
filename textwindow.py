@@ -10,7 +10,9 @@ class TextWindow(Window):
         self.fontColor = fontColor
 
         self.text_update_fn = None
+        self._render_text()
 
+    def _render_text(self):
         # first render of the text. If it never changes, we never need to render it again!
         self._rendered_text = self.font.render(self.text, True, self.fontColor)
         self._last_rendered_text = self.text
@@ -20,10 +22,7 @@ class TextWindow(Window):
         # if we have a text update function, we run it
         if self.text_update_fn:
             self.text = self.text_update_fn()
-        # Only render the text if it has changed
-        if self.text != self._last_rendered_text:
-            self._rendered_text = self.font.render(self.text, True, self.fontColor)
-
+    
     def render_text(self):
         howmuchtext = self.text
         avail = self.get_available_size()
@@ -32,6 +31,10 @@ class TextWindow(Window):
         print(howmuchtext)
 
     def on_render(self):
+        # Only render the text if it has changed
+        if self.text != self._last_rendered_text:
+            self._render_text()
+
         adj_position = self.rel_position((0,0))
         self._surface.blit(self._rendered_text, adj_position)
         super().on_render()

@@ -5,7 +5,8 @@ from grid import Grid
 from app import App
 from colors import Colors
 from player import PlayerStatus
-from textwindow import TextWindow   
+from textwindow import TextWindow
+from multilinetextwindow import MultiLineTextWindow
 
 import requests
 from io import BytesIO
@@ -57,8 +58,8 @@ if __name__ == '__main__':
     pygame.font.init()
     mainfont = pygame.font.SysFont('CaskaydiaCove Nerd Font', 30)
 
-    app = App()
-    grid = Grid(app, (20,20), (400, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
+    app = App((640, 480))
+    grid = Grid(app, (20,20), (600, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
     slots = grid.get_usable_slot_size()
     artwork = Current_Song(grid, None, slots)
     tw, th = slots
@@ -78,11 +79,14 @@ if __name__ == '__main__':
     #subq.bg = (0,255,0)
     #subq2 = Square(subgrid, None, subgrid.get_usable_slot_size())
     #subq2.bg = (255,0,0)
+    # sq3 = Square(grid, None, slots)
 
-    sq3 = Square(grid, None, slots)
+    textML = MultiLineTextWindow(grid, None, slots,
+                                 "This is \na multiline \ntext", mainfont, Colors.fg, margin=(5,5,5,5))
+
     grid.register_child(artwork, slot=(0,0))
     grid.register_child(subgrid, slot=(0,1))
-    grid.register_child(sq3, slot=(1,0))
+    grid.register_child(textML, slot=(1,0))
     subgrid.register_child(text1, slot=(0,0))
     subgrid.register_child(text2, slot=(0,1))
     app.run()

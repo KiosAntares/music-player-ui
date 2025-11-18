@@ -6,8 +6,9 @@
 - [ ] Stateful children signaling
 - [ ] Rounded Window rendering
 - [ ] MultiState window (Window that renders different things based on a signaled state)
-- [ ] Multiline text
+- [X] Multiline text
 - [ ] Marquee Text
+- [ ] Image Window, with stretching rules
 ## Player Library
 - [ ] Refactor "Player" as generic interface
 - [ ] Impl. "PlayerCtl" player class
