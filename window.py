@@ -8,7 +8,7 @@ class Window:
         self.size = size
         self.margin = margin
 
-        self._surface = pygame.Surface(self.size, pygame.SRCALPHA)
+        self._surface = pygame.Surface(self.size, pygame.SRCALPHA | pygame.HWSURFACE)
         self._children = []
         # Usually, children register themselves for a better experience
         # This excludes grids.
@@ -35,9 +35,13 @@ class Window:
             child.on_loop()
         pass
 
+    def pre_render(self):
+        self._surface.fill(Colors.empty)
+
     # By default, windows delagate the rendering to the children, and then place
     # them at the requested position on their surface.
     def on_render(self):
+        # self._surface.fill(Colors.empty)
         for child in self._children:
             child.on_render()
             self._surface.blit(child._surface, self.rel_position(child.position))

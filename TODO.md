@@ -6,8 +6,8 @@
 - [ ] Stateful children signaling
 - [ ] Rounded Window rendering
 - [ ] MultiState window (Window that renders different things based on a signaled state)
-- ~~[X] Multiline text~~ Removed: Implemented by pygame-ce 2.1.4
-- [ ] TextWindow: fix overalpping text
+- [X] ~~Multiline text~~ Removed: Implemented by pygame-ce 2.1.4
+- [x] TextWindow: fix overalpping text
 - [ ] Marquee Text
 - [ ] Image Window, with stretching rules
 ## Player Library

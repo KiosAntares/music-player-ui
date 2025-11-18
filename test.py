@@ -9,6 +9,7 @@ from textwindow import TextWindow
 
 import requests
 from io import BytesIO
+import datetime
 
 
 # MARGINS and GAPS:
@@ -41,6 +42,7 @@ class Current_Song(Window):
             self._img = pygame.transform.smoothscale(img, self.size)
 
     def on_render(self):
+        super().pre_render()
         if self._img:
             self._surface.blit(self._img, (0,0))
         super().on_render()
@@ -58,6 +60,7 @@ if __name__ == '__main__':
     mainfont = pygame.font.SysFont('CaskaydiaCove Nerd Font', 30)
 
     app = App((640, 480))
+
     grid = Grid(app, (20,20), (600, 400), (2,2), margin= (10,10,10,10), gap=(5,5,5,5))
     slots = grid.get_usable_slot_size()
     artwork = Current_Song(grid, None, slots)
@@ -80,8 +83,11 @@ if __name__ == '__main__':
     #subq2.bg = (255,0,0)
     # sq3 = Square(grid, None, slots)
 
-    textML = TextWindow(grid, None, slots,
+    textML = TextWindow(grid, (0,0), slots,
                                  "This is \na multiline text", mainfont, Colors.fg, margin=(5,5,5,5))
+
+    textML.text_update_fn = lambda:\
+        str(datetime.datetime.now())
 
     grid.register_child(artwork, slot=(0,0))
     grid.register_child(subgrid, slot=(0,1))
@@ -89,3 +95,5 @@ if __name__ == '__main__':
     subgrid.register_child(text1, slot=(0,0))
     subgrid.register_child(text2, slot=(0,1))
     app.run()
+
+    

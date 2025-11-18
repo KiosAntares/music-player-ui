@@ -47,6 +47,7 @@ class Grid(Window):
                 child.on_loop()
 
     def on_render(self):
+        super().pre_render()
         # We only need "origin" gaps for calculations now
         # We allow children to overlap and don't bind them here!
         gt, _, gl, _ = self.gap
