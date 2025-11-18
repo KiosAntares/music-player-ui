@@ -103,15 +103,16 @@ def pretty_print_dict_aligned(d):
     for key, value in d.items():
         print(f"{key:<{width}} : {value}")
 
-sessions = get_sessions()
+if __name__ == '__main__':
+    sessions = get_sessions()
 
-for s in sessions:
-    item = s.get("NowPlayingItem")
-    if not item or item.get("MediaType") != "Audio":
-        continue
+    for s in sessions:
+        item = s.get("NowPlayingItem")
+        if not item or item.get("MediaType") != "Audio":
+            continue
 
-    print(s.get('DeviceName'))
-    status = get_playback_status(s)
-    pretty_print_dict_aligned(status)
-    metadata = extract_song_metadata(item, JELLYFIN_URL)
-    pretty_print_dict_aligned(metadata)
+        print(s.get('DeviceName'))
+        status = get_playback_status(s)
+        pretty_print_dict_aligned(status)
+        metadata = extract_song_metadata(item, JELLYFIN_URL)
+        pretty_print_dict_aligned(metadata)
