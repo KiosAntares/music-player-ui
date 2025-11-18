@@ -13,14 +13,21 @@ class Jellyfin(Player):
             'X-Emby-Token': self.apikey
         }
 
-    def make_request(self, endpoint):
+    def get_request(self, endpoint):
         url = f"{self.url}/{endpoint}"
         response = requests.get(url, headers = self.header)
         response.raise_for_status()
         return response.json()
 
+    def post_request(self, endpoint, payload):
+        url = f"{self.url}/{endpoint}"
+        response = requests.post(url, headers = self.header, json = payload)
+        print(response.text)
+        response.raise_for_status()
+        print(response)
+
     def _get_sessions(self):
-        sessions = self.make_request('Sessions')
+        sessions = self.get_request('Sessions')
         out = []
         for session in sessions:
             item = session.get('NowPlayingItem')
@@ -74,6 +81,7 @@ class Jellyfin(Player):
             'codec': audio_stream['DisplayTitle'],
             'sampleRate': audio_stream['SampleRate'],
             'bitDepth': audio_stream['BitDepth'],
+            'sessionId': session.get('Id'),
             })
         return sessions
 
@@ -82,3 +90,12 @@ class Jellyfin(Player):
         if self._get_metadata(): 
             return self._get_metadata()[0] 
         else: {}
+
+    def next_track(self):
+        # POST /Sessions/{id}/Command/NextTrack
+        sessionId = self.currently_playing().get('sessionId')
+        command = {
+            "Command": "NextTrack"
+        }
+        self.post_request(f"Sessions/{sessionId}/Command", command)
+
