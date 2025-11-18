@@ -1,4 +1,5 @@
 from window import Window
+from colors import Colors
 import pygame
 
 class TextWindow(Window):
@@ -14,7 +15,7 @@ class TextWindow(Window):
 
     def _render_text(self):
         # first render of the text. If it never changes, we never need to render it again!
-        self._rendered_text = self.font.render(self.text, True, self.fontColor)
+        self._rendered_text = self.font.render(self.text, True, self.fontColor, wraplength=self.size[0])
         self._last_rendered_text = self.text
 
     def on_loop(self):
@@ -36,5 +37,6 @@ class TextWindow(Window):
             self._render_text()
 
         adj_position = self.rel_position((0,0))
+        self._surface.fill(Colors.empty)
         self._surface.blit(self._rendered_text, adj_position)
         super().on_render()

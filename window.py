@@ -8,7 +8,7 @@ class Window:
         self.size = size
         self.margin = margin
 
-        self._surface = pygame.Surface(self.size, pygame.SRCALPHA | pygame.HWSURFACE)
+        self._surface = pygame.Surface(self.size, pygame.SRCALPHA)
         self._children = []
         # Usually, children register themselves for a better experience
         # This excludes grids.

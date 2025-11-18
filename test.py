@@ -1,12 +1,12 @@
 import pygame
 from pygame.locals import *
+from multilinetextwindow import MultiLineTextWindow
 from window import Window
 from grid import Grid
 from app import App
 from colors import Colors
-from player import PlayerStatus
+from playerctl import Playerctl
 from textwindow import TextWindow
-from multilinetextwindow import MultiLineTextWindow
 
 import requests
 from io import BytesIO
@@ -34,7 +34,7 @@ class Current_Song(Window):
 
     def on_loop(self):
         super().on_loop()
-        art_source = PlayerStatus.get_art_url(PlayerStatus.get_full_status())
+        art_source = Playerctl.currently_playing().get('artUrl')
         if (art_source != self.art_source):
             print(f"DEBUG: fetching image {art_source}")
             self.art_source = art_source
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                      "", mainfont, Colors.fg, margin=(20,20,5,5))
 
     text2.text_update_fn = lambda:\
-        PlayerStatus.get_song_title(PlayerStatus.get_full_status())
+        Playerctl.currently_playing().get('title')
 
     #subq = Square(subgrid, None, subgrid.get_usable_slot_size())
     #subq.bg = (0,255,0)
@@ -81,8 +81,8 @@ if __name__ == '__main__':
     #subq2.bg = (255,0,0)
     # sq3 = Square(grid, None, slots)
 
-    textML = MultiLineTextWindow(grid, None, slots,
-                                 "This is \na multiline \ntext", mainfont, Colors.fg, margin=(5,5,5,5))
+    textML = MultiLineTextWindowTextWindow(grid, None, slots,
+                                 "This is \na multiline text", mainfont, Colors.fg, margin=(5,5,5,5))
 
     grid.register_child(artwork, slot=(0,0))
     grid.register_child(subgrid, slot=(0,1))

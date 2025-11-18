@@ -10,6 +10,6 @@
 - [ ] Marquee Text
 - [ ] Image Window, with stretching rules
 ## Player Library
-- [ ] Refactor "Player" as generic interface
-- [ ] Impl. "PlayerCtl" player class
+- [x] Refactor "Player" as generic interface
+- [x] Impl. "PlayerCtl" player class
 - [ ] Impl. "Jellyfin" player class
