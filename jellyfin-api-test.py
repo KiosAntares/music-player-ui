@@ -65,6 +65,38 @@ def extract_song_metadata(now_playing, base_url):
         "bit_depth": audio_stream['BitDepth'],
     }
 
+def get_playback_status(session):
+    play_state = session.get("PlayState", {})
+    item = session.get("NowPlayingItem", {})
+
+    status = "paused" if play_state.get("IsPaused") else "playing"
+
+    # ticks → seconds
+    pos_sec = play_state.get("PositionTicks", 0) / 10_000_000
+    dur_sec = item.get("RunTimeTicks", 0) / 10_000_000
+
+    progress = pos_sec / dur_sec if dur_sec > 0 else 0
+
+    return {
+        "status": status,
+        "position_seconds": pos_sec,
+        "duration_seconds": dur_sec,
+        "position_human": format_time(pos_sec),
+        "duration_human": format_time(dur_sec),
+        "progress": progress,
+    }
+
+def format_time(seconds: float) -> str:
+    seconds = int(seconds)
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    s = seconds % 60
+
+    if h > 0:
+        return f"{h:d}:{m:02d}:{s:02d}"   # e.g. 1:05:12
+    else:
+        return f"{m:02d}:{s:02d}"         # e.g. 03:45
+
 def pretty_print_dict_aligned(d):
     # Get longest key for alignment
     width = max(len(k) for k in d.keys())
@@ -79,5 +111,7 @@ for s in sessions:
         continue
 
     print(s.get('DeviceName'))
+    status = get_playback_status(s)
+    pretty_print_dict_aligned(status)
     metadata = extract_song_metadata(item, JELLYFIN_URL)
     pretty_print_dict_aligned(metadata)
