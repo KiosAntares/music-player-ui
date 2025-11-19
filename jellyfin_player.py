@@ -1,8 +1,6 @@
 import requests
-import dotenv
 
 from player import Player
-from os_utils import format_time
 
 
 class Jellyfin(Player):

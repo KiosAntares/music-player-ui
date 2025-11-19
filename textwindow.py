@@ -1,6 +1,4 @@
 from window import Window
-from colors import Colors
-import pygame
 
 
 class TextWindow(Window):

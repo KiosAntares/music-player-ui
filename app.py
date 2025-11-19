@@ -42,8 +42,7 @@ class App(Window):
 
     # Core loop
     def run(self):
-        if self.init() == False:
-            self._running = False
+        self.init()
 
         # print(f"Children: {self._children}")
         while self._running:

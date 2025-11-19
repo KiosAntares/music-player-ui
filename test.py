@@ -1,19 +1,16 @@
 import pygame
-from pygame.locals import *
-from jellyfin_player import Jellyfin
+# from pygame.locals import *
 from window import Window
 from grid import Grid
 from app import App
 from colors import Colors
 from playerctl import Playerctl
-from jellyfin_player import Jellyfin
 from textwindow import TextWindow
 
 import requests
 from io import BytesIO
 import datetime
 import dotenv
-import os
 
 
 # MARGINS and GAPS:
@@ -104,10 +101,7 @@ if __name__ == "__main__":
         margin=(20, 20, 5, 5),
     )
 
-    f = (
-        lambda: f"{player.currently_playing().get('title')} on {player.currently_playing().get('device')}"
-    )
-    text2.text_update_fn = lambda: f()
+    text2.text_update_fn = lambda: (lambda: f"{player.currently_playing().get('title')} on {player.currently_playing().get('device')}")()
 
     # subq = Square(subgrid, None, subgrid.get_usable_slot_size())
     # subq.bg = (0,255,0)
