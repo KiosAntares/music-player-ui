@@ -10,6 +10,8 @@
 - [x] TextWindow: fix overalpping text
 - [ ] Marquee Text
 - [ ] Image Window, with stretching rules
+- [ ] Add Keycapture to app
+- [ ] Add App state, accessible to any child of App
 ## Player Library
 - [x] Refactor "Player" as generic interface
 - [x] Refactor "Player" from static to better align interface
@@ -18,3 +20,4 @@
 - [x] Impl. "Jellyfin" player class
 - [ ] Implement "PlayerCtl" play controls
 - [ ] Implement "Jellyfin" play controls
+- [ ] "Jellyfin": implement load from config/.env
