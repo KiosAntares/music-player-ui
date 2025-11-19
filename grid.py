@@ -1,20 +1,23 @@
 from window import Window
 
+
 class Grid(Window):
-    def __init__(self, parent, position, size, gridsize, margin = (0,0,0,0), gap = (0,0)):
+    def __init__(
+        self, parent, position, size, gridsize, margin=(0, 0, 0, 0), gap=(0, 0)
+    ):
         super().__init__(parent, position, size)
         self.margin = margin
         self.gap = gap
         self._cols, self._rows = gridsize
 
-        # setup a 2D array of null children 
+        # setup a 2D array of null children
         for _ in range(self._cols):
-           col = [None for _ in range(self._rows)]
-           self._children.append(col) 
+            col = [None for _ in range(self._rows)]
+            self._children.append(col)
 
-    def register_child(self, child, slot = None):
+    def register_child(self, child, slot=None):
         # This is for interface-compatibility with the components that expect
-        # To register themselves instead of delegating. We don't register and wait. 
+        # To register themselves instead of delegating. We don't register and wait.
         # We don't register and wait
         if not slot:
             return
@@ -31,7 +34,7 @@ class Grid(Window):
 
     def get_usable_slot_size(self):
         # Here we take gaps into consideration to inform the children
-        slot_width_col, slot_height_row = self.get_slot_size() 
+        slot_width_col, slot_height_row = self.get_slot_size()
         # Gap TOP, BOTTOM, LEFT, RIGHT
         gt, gb, gl, gr = self.gap
         effective_col = slot_width_col - gl - gr
@@ -42,8 +45,8 @@ class Grid(Window):
         # Step all existing children
         for i, col in enumerate(self._children):
             for j, child in enumerate(col):
-                if not child: 
-                   continue 
+                if not child:
+                    continue
                 child.on_loop()
 
     def on_render(self):
@@ -51,13 +54,15 @@ class Grid(Window):
         # We only need "origin" gaps for calculations now
         # We allow children to overlap and don't bind them here!
         gt, _, gl, _ = self.gap
-        slot_width_col, slot_height_row = self.get_slot_size() 
+        slot_width_col, slot_height_row = self.get_slot_size()
         for i, col in enumerate(self._children):
             for j, child in enumerate(col):
-                if not child: 
-                   continue 
+                if not child:
+                    continue
                 # We get position relative to in-window (accounting for margins)
-                slot_h, slot_w = self.rel_position((slot_width_col * i, slot_height_row * j))
+                slot_h, slot_w = self.rel_position(
+                    (slot_width_col * i, slot_height_row * j)
+                )
                 # We now include the gaps
                 c_pos_h = slot_h + gt
                 c_pos_w = slot_w + gl

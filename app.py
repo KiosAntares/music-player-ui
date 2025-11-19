@@ -2,16 +2,17 @@ import pygame
 from window import Window
 from colors import Colors
 
+
 # The specialization of App is particularly intense
 class App(Window):
     def __init__(self, size):
         self._running = True
-        self._surface= None
+        self._surface = None
         self.size = self.width, self.height = size
         self.framerate = 1
         self._children = []
         self._clock = None
-        self.margin = (0,0,0,0)
+        self.margin = (0, 0, 0, 0)
 
     def init(self):
         pygame.init()
@@ -45,13 +46,13 @@ class App(Window):
             self._running = False
 
         # print(f"Children: {self._children}")
-        while ( self._running ):
+        while self._running:
             for event in pygame.event.get():
                 self.on_event(event)
             self.on_loop()
             self.on_render()
             # We set a framerate to avoid running too fast
             # TODO: consider vsync?
-            self._clock.tick(self.framerate) 
-        
+            self._clock.tick(self.framerate)
+
         self.on_cleanup()

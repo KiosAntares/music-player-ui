@@ -1,11 +1,11 @@
 import subprocess
 import re
 
+
 class Player:
     def currently_playing(self):
-        """ Return currently playing song"""
+        """Return currently playing song"""
         pass
-
 
     def next_track(self):
         pass
@@ -18,6 +18,3 @@ class Player:
 
     def pause(self):
         pass
-
-
-

@@ -1,8 +1,9 @@
 import pygame
 from colors import Colors
 
+
 class Window:
-    def __init__(self, parent, position, size, margin = (0,0,0,0)):
+    def __init__(self, parent, position, size, margin=(0, 0, 0, 0)):
         self._parent = parent
         self.position = position
         self.size = size
