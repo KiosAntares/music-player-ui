@@ -12,8 +12,9 @@ class TextWindow(Window):
         fontColor,
         justify=None,
         margin=(0, 0, 0, 0),
+        background=None
     ):
-        super().__init__(parent, position, size, margin=margin)
+        super().__init__(parent, position, size, margin=margin, background=background)
         self.text = text
         self.font = font
         self.justify = justify

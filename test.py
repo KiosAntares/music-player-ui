@@ -1,16 +1,19 @@
 import pygame
 # from pygame.locals import *
+from linear_gradient import LinearGradient
 from window import Window
 from grid import Grid
 from app import App
 from colors import Colors
 from playerctl import Playerctl
 from textwindow import TextWindow
+from jellyfin_player import Jellyfin
 
 import requests
 from io import BytesIO
 import datetime
 import dotenv
+import os
 
 
 # MARGINS and GAPS:
@@ -67,8 +70,11 @@ if __name__ == "__main__":
 
     app = App((640, 480))
 
-    player = Playerctl()
-    # player = Jellyfin(os.getenv('JELLYFIN_URL'), os.getenv('JELLYFIN_API_KEY'), '')
+    # player = Playerctl()
+    player = Jellyfin(os.getenv('JELLYFIN_URL'), os.getenv('JELLYFIN_API_KEY'), '')
+
+
+    test_gradient = LinearGradient((600,400), (10,10,10), (100,40,40))
 
     grid = Grid(
         app, (20, 20), (600, 400), (2, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
@@ -89,6 +95,7 @@ if __name__ == "__main__":
         mainfont,
         Colors.fg,
         margin=(20, 20, 5, 5),
+        background = test_gradient
     )
 
     text2 = TextWindow(

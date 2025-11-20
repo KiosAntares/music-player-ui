@@ -3,11 +3,12 @@ from colors import Colors
 
 
 class Window:
-    def __init__(self, parent, position, size, margin=(0, 0, 0, 0)):
+    def __init__(self, parent, position, size, margin=(0, 0, 0, 0), background = None):
         self._parent = parent
         self.position = position
         self.size = size
         self.margin = margin
+        self.background = background
 
         self._surface = pygame.Surface(self.size, pygame.SRCALPHA | pygame.HWSURFACE)
         self._children = []
@@ -38,6 +39,8 @@ class Window:
 
     def pre_render(self):
         self._surface.fill(Colors.empty)
+        if self.background:
+            self._surface.blit(self.background.get_surface(), (0,0))
 
     # By default, windows delagate the rendering to the children, and then place
     # them at the requested position on their surface.

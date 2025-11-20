@@ -3,9 +3,9 @@ from window import Window
 
 class Grid(Window):
     def __init__(
-        self, parent, position, size, gridsize, margin=(0, 0, 0, 0), gap=(0, 0)
+        self, parent, position, size, gridsize, margin=(0, 0, 0, 0), gap=(0, 0), background=None
     ):
-        super().__init__(parent, position, size)
+        super().__init__(parent, position, size, background=background)
         self.margin = margin
         self.gap = gap
         self._cols, self._rows = gridsize
