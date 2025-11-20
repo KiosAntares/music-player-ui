@@ -16,6 +16,7 @@
 - [x] Add support for backgroung gradients
 - [x] Add support for clipping masks
 - [x] Add rounded border clipping mask
+- [ ] Add on demand rendering
 ## Player Library
 - [x] Refactor "Player" as generic interface
 - [x] Refactor "Player" from static to better align interface
