@@ -1,6 +1,6 @@
 import pygame
-from window import Window
-from colors import Colors
+from windows.window import Window
+from utils.colors import Colors
 
 
 # The specialization of App is particularly intense

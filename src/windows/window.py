@@ -1,5 +1,5 @@
 import pygame
-from colors import Colors
+from utils.colors import Colors
 
 
 class Window:

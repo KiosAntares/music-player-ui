@@ -1,4 +1,4 @@
-from window import Window
+from windows.window import Window
 
 
 class TextWindow(Window):

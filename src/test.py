@@ -1,14 +1,18 @@
 import pygame
 # from pygame.locals import *
-from rounded_borders import CMRoundedBorders
-from linear_gradient import LinearGradient
-from window import Window
-from grid import Grid
-from app import App
-from colors import Colors
-from playerctl import Playerctl
-from textwindow import TextWindow
-from jellyfin_player import Jellyfin
+
+from windows.app import App
+from windows.window import Window   
+from windows.grid import Grid
+from windows.textwindow import TextWindow
+
+from utils.colors import Colors
+
+from effects.rounded_borders import CMRoundedBorders
+from effects.linear_gradient import LinearGradient
+
+from players.playerctl import Playerctl
+from players.jellyfin_player import Jellyfin
 
 import requests
 from io import BytesIO

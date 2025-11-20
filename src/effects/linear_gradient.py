@@ -1,5 +1,5 @@
 import pygame
-from graphic_surface import GraphicSurface
+from effects.graphic_surface import GraphicSurface
 
 
 class LinearGradient(GraphicSurface):

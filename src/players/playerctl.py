@@ -1,7 +1,7 @@
 import re
 
-from player import Player
-from os_utils import run_cmd
+from players.player import Player
+from utils.os_utils import run_cmd
 
 
 class Playerctl(Player):

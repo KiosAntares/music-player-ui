@@ -1,5 +1,5 @@
-from clipping_mask import ClippingMask
-from colors import Colors
+from effects.clipping_mask import ClippingMask
+from utils.colors import Colors
 import pygame
 
 class CMRoundedBorders(ClippingMask):
