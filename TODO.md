@@ -12,6 +12,7 @@
 - [ ] Image Window, with stretching rules
 - [ ] Add Keycapture to app
 - [ ] Add App state, accessible to any child of App
+- [ ] Add support for background surfaces for windows
 ## Player Library
 - [x] Refactor "Player" as generic interface
 - [x] Refactor "Player" from static to better align interface
