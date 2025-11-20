@@ -3,12 +3,14 @@ from colors import Colors
 
 
 class Window:
-    def __init__(self, parent, position, size, margin=(0, 0, 0, 0), background = None):
+    def __init__(self, parent, position, size, margin=(0, 0, 0, 0), 
+                 background = None):
         self._parent = parent
         self.position = position
         self.size = size
         self.margin = margin
         self.background = background
+        self.clipping_masks = []
 
         self._surface = pygame.Surface(self.size, pygame.SRCALPHA | pygame.HWSURFACE)
         self._children = []
@@ -49,4 +51,7 @@ class Window:
         for child in self._children:
             child.on_render()
             self._surface.blit(child._surface, self.rel_position(child.position))
+
+        for mask in self.clipping_masks:
+            mask.apply(self._surface)
         pass

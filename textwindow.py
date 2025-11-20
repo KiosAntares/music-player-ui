@@ -43,3 +43,4 @@ class TextWindow(Window):
             self._render_text()
             adj_position = self.rel_position((0, 0))
             self._surface.blit(self._rendered_text, adj_position)
+        super().on_render()

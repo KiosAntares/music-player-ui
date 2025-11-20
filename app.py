@@ -13,6 +13,7 @@ class App(Window):
         self._children = []
         self._clock = None
         self.margin = (0, 0, 0, 0)
+        self.clipping_masks = []
 
     def init(self):
         pygame.init()

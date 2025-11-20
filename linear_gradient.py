@@ -17,6 +17,7 @@ class LinearGradient(GraphicSurface):
            self.color2 != self._last_rendered_state.get('color2') or\
            self.direction != self._last_rendered_state.get('direction'):
             return True
+        return False
 
     def render(self):
         print("DEBUG: Rendering gradient")

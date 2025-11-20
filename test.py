@@ -1,6 +1,8 @@
 import pygame
 # from pygame.locals import *
+from rounded_borders import CMRoundedBorders
 from linear_gradient import LinearGradient
+from rounded_borders import CMRoundedBorders
 from window import Window
 from grid import Grid
 from app import App
@@ -80,12 +82,20 @@ if __name__ == "__main__":
         app, (20, 20), (600, 400), (2, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
     )
     slots = grid.get_usable_slot_size()
+
+
     artwork = Current_Song(grid, None, slots)
+    artwork.clipping_masks.append(
+        CMRoundedBorders(slots, 20)
+    )
     artwork.player = player
+
     tw, th = slots
     subgrid = Grid(
         grid, None, (tw * 2, th), (1, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
     )
+
+    sgBRCM = CMRoundedBorders(subgrid.get_usable_slot_size(), 10)
 
     text1 = TextWindow(
         subgrid,
@@ -106,7 +116,11 @@ if __name__ == "__main__":
         mainfont,
         Colors.fg,
         margin=(20, 20, 5, 5),
+        background=test_gradient
     )
+
+    text1.clipping_masks.append(sgBRCM)
+    text2.clipping_masks.append(sgBRCM)
 
     text2.text_update_fn = lambda: (lambda: f"{player.currently_playing().get('title')} on {player.currently_playing().get('device')}")()
 
