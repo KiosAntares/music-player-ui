@@ -20,7 +20,7 @@ class LinearGradient(GraphicSurface):
         return False
 
     def render(self):
-        print("DEBUG: Rendering gradient")
+        print("[DEBUG] Rendering gradient")
         self._last_rendered_state['color1'] = self.color1
         self._last_rendered_state['color2'] = self.color2
         self._last_rendered_state['direction'] = self.direction

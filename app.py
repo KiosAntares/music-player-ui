@@ -14,6 +14,9 @@ class App(Window):
         self._clock = None
         self.margin = (0, 0, 0, 0)
         self.clipping_masks = []
+        self._rerender = True
+        self._parent = self
+        self.DEBUG_whoasked = []
 
     def init(self):
         pygame.init()
@@ -32,8 +35,11 @@ class App(Window):
 
     # We can't defer render anymore, so we render all children and then execute the buffer flip
     def on_render(self):
+        if not self.should_rerender():
+            return
         self._surface.fill(Colors.background)
         super().on_render()
+        self._rerender = False
         pygame.display.flip()
         pass
 

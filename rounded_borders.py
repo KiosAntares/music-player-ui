@@ -11,7 +11,7 @@ class CMRoundedBorders(ClippingMask):
 
     def render_mask(self):
         if self.should_rerender():
-            print("DEBUG: Rendering rounded CM")
+            print("[DEBUG] Rendering rounded CM")
             self._rendered_mask.fill(Colors.empty)
             self._last_rendered_state['border_radius'] = self.border_radius
             pygame.draw.rect(self._rendered_mask,

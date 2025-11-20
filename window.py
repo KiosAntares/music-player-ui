@@ -17,6 +17,8 @@ class Window:
         # Usually, children register themselves for a better experience
         # This excludes grids.
         self._parent.register_child(self)
+        self._rerender = False
+        self.DEBUG_whoasked = []
 
     def register_child(self, child):
         self._children.append(child)
@@ -37,9 +39,16 @@ class Window:
     def on_loop(self):
         for child in self._children:
             child.on_loop()
-        pass
+        if self.should_rerender():
+            self._parent._rerender = True
+            self._parent.DEBUG_whoasked.append(self)
+
+    def should_rerender(self):
+        return self._rerender
 
     def pre_render(self):
+        if not self.should_rerender():
+            return
         self._surface.fill(Colors.empty)
         if self.background:
             self._surface.blit(self.background.get_surface(), (0,0))
@@ -47,11 +56,18 @@ class Window:
     # By default, windows delagate the rendering to the children, and then place
     # them at the requested position on their surface.
     def on_render(self):
+        # print(f"Should I ({type(self)}) be rendering? {self._rerender}")
+        if not self.should_rerender():
+            return
         # self._surface.fill(Colors.empty)
+        print(f"[DEBUG] I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
         for child in self._children:
+            if not child.should_rerender():
+                continue
             child.on_render()
             self._surface.blit(child._surface, self.rel_position(child.position))
 
         for mask in self.clipping_masks:
             mask.apply(self._surface)
-        pass
+        self._rerender = False
+        self.DEBUG_whoasked = []

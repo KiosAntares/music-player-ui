@@ -48,9 +48,16 @@ class Grid(Window):
                 if not child:
                     continue
                 child.on_loop()
+        if self.should_rerender():
+            self._parent._rerender = True
+            self._parent.DEBUG_whoasked.append(self)
 
     def on_render(self):
         super().pre_render()
+        if not self.should_rerender():
+            return
+        self._parent._rerender = True
+        print(f"[DEBUG] I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
         # We only need "origin" gaps for calculations now
         # We allow children to overlap and don't bind them here!
         gt, _, gl, _ = self.gap
@@ -69,3 +76,4 @@ class Grid(Window):
                 child.on_render()
                 # We render the child on top
                 self._surface.blit(child._surface, (c_pos_h, c_pos_w))
+        self._rerender = False

@@ -2,7 +2,6 @@ import pygame
 # from pygame.locals import *
 from rounded_borders import CMRoundedBorders
 from linear_gradient import LinearGradient
-from rounded_borders import CMRoundedBorders
 from window import Window
 from grid import Grid
 from app import App
@@ -42,19 +41,21 @@ class Current_Song(Window):
         self.player = None
 
     def on_loop(self):
-        super().on_loop()
         art_source = self.player.currently_playing().get("artUrl")
         if art_source != self.art_source:
-            print(f"DEBUG: fetching image {art_source}")
+            print(f"[DEBUG] fetching image {art_source}")
             self.art_source = art_source
             img = get_image(art_source)
             self._img = pygame.transform.smoothscale(img, self.size)
+            self._rerender = True
+        super().on_loop()
 
     def on_render(self):
         super().pre_render()
         if self._img:
             self._surface.blit(self._img, (0, 0))
         super().on_render()
+
 
 
 class Square(Window):
@@ -140,7 +141,7 @@ if __name__ == "__main__":
         margin=(5, 5, 5, 5),
     )
 
-    textML.text_update_fn = lambda: str(datetime.datetime.now())
+    # textML.text_update_fn = lambda: str(datetime.datetime.now())
 
     grid.register_child(artwork, slot=(0, 0))
     grid.register_child(subgrid, slot=(0, 1))
