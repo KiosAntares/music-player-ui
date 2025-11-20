@@ -37,7 +37,10 @@ class TextWindow(Window):
     def on_loop(self):
         # if we have a text update function, we run it
         if self.text_update_fn:
-            self.text = self.text_update_fn()
+            try:
+                self.text = self.text_update_fn()
+            except Exception as e:
+                print(f"DEBUG: failed to run text update function: {e}")
         super().on_loop()
 
     def on_render(self):

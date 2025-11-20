@@ -41,6 +41,8 @@ class Current_Song(Window):
         self.player = None
 
     def on_loop(self):
+        if not self.player.currently_playing():
+            return
         art_source = self.player.currently_playing().get("artUrl")
         if art_source != self.art_source:
             print(f"[DEBUG] fetching image {art_source}")
@@ -123,7 +125,7 @@ if __name__ == "__main__":
     text1.clipping_masks.append(sgBRCM)
     text2.clipping_masks.append(sgBRCM)
 
-    text2.text_update_fn = lambda: (lambda: f"{player.currently_playing().get('title')} on {player.currently_playing().get('device')}")()
+    text2.text_update_fn = lambda: (lambda: f"{player.currently_playing().get('title')}")() #on {player.currently_playing().get('device')}")()
 
     # subq = Square(subgrid, None, subgrid.get_usable_slot_size())
     # subq.bg = (0,255,0)
