@@ -1,5 +1,12 @@
 import subprocess
+import requests
+import pygame
+from io import BytesIO
 
+def get_image(url):
+    img = requests.get(url).content
+    img = pygame.image.load(BytesIO(img)).convert()
+    return img
 
 def run_cmd(*cmd):
     res = subprocess.run(cmd, capture_output=True, text=True)

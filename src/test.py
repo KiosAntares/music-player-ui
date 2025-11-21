@@ -5,6 +5,7 @@ from windows.app import App
 from windows.window import Window   
 from windows.grid import Grid
 from windows.textwindow import TextWindow
+from windows.imagewindow import ImageWindow, FitModes
 
 from utils.colors import Colors
 
@@ -14,8 +15,6 @@ from effects.linear_gradient import LinearGradient
 from players.playerctl import Playerctl
 from players.jellyfin_player import Jellyfin
 
-import requests
-from io import BytesIO
 import datetime
 import dotenv
 import os
@@ -31,36 +30,10 @@ import os
 # Column, Row
 
 
-def get_image(url):
-    img = requests.get(url).content
-    img = pygame.image.load(BytesIO(img)).convert()
-    return img
 
 
-class Current_Song(Window):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.art_source = None
-        self._img = None
-        self.player = None
 
-    def on_loop(self):
-        if not self.player.currently_playing():
-            return
-        art_source = self.player.currently_playing().get("artUrl")
-        if art_source != self.art_source:
-            print(f"[DEBUG] fetching image {art_source}")
-            self.art_source = art_source
-            img = get_image(art_source)
-            self._img = pygame.transform.smoothscale(img, self.size)
-            self._rerender = True
-        super().on_loop()
 
-    def on_render(self):
-        super().pre_render()
-        if self._img:
-            self._surface.blit(self._img, (0, 0))
-        super().on_render()
 
 
 
@@ -90,12 +63,13 @@ if __name__ == "__main__":
     )
     slots = grid.get_usable_slot_size()
 
+ #         art_source = self.player.currently_playing().get("artUrl")
 
-    artwork = Current_Song(grid, None, slots)
+    artwork = ImageWindow(grid, None, slots, None, FitModes.CENTERED_FILL)
+    artwork.img_update_fn = lambda: player.currently_playing().get("artUrl")
     artwork.clipping_masks.append(
         CMRoundedBorders(slots, 20)
     )
-    artwork.player = player
 
     tw, th = slots
     subgrid = Grid(

@@ -4,12 +4,12 @@
 - [ ] Progress Bar
 - [ ] "Tabs" (Windows that can be set as inactive)
 - [ ] Stateful children signaling
-- [ ] Rounded Window rendering
+- [x] Rounded Window rendering
 - [ ] MultiState window (Window that renders different things based on a signaled state)
 - [X] ~~Multiline text~~ Removed: Implemented by pygame-ce 2.1.4
 - [x] TextWindow: fix overalpping text
 - [ ] Marquee Text
-- [ ] Image Window, with stretching rules
+- [x] Image Window, with stretching rules
 - [ ] Add Keycapture to app
 - [ ] Add App state, accessible to any child of App
 - [x] Add support for background surfaces for windows
