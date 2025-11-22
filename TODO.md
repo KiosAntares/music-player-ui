@@ -1,7 +1,7 @@
 # TODO
 ## UI Library
 - [ ] FlexyGrid (grid with support for non uniform grids)
-- [ ] Progress Bar
+- [x] Progress Bar
 - [ ] "Tabs" (Windows that can be set as inactive)
 - [ ] Stateful children signaling
 - [x] Rounded Window rendering
@@ -17,6 +17,7 @@
 - [x] Add support for clipping masks
 - [x] Add rounded border clipping mask
 - [x] Add on demand rendering
+- [ ] Generate surfaces from color for backgrounds
 ## Player Library
 - [x] Refactor "Player" as generic interface
 - [x] Refactor "Player" from static to better align interface
@@ -26,3 +27,5 @@
 - [ ] Implement "PlayerCtl" play controls
 - [ ] Implement "Jellyfin" play controls
 - [ ] "Jellyfin": implement load from config/.env
+## Utils Library
+- [x] Refactor vec2 (coord) operations into a file

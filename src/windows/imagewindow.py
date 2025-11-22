@@ -1,3 +1,4 @@
+from utils.vec2 import divide_2vec, quant_2vec, scale_2vec, sub_2vec
 from windows.window import Window
 from utils.os_utils import get_image
 import pygame
@@ -36,10 +37,8 @@ class ImageWindow(Window):
         elif self.fit_mode == FitModes.CROP:
             pass 
         elif self.fit_mode == FitModes.FILL or self.fit_mode == FitModes.CENTERED_FILL:
-            img_w, img_h = self._rendered_img.size
-            w, h = self.get_available_size()
-            w_ratio, h_ratio = w/img_w, h/img_h
-            self._rendered_img = pygame.transform.smoothscale_by(self._rendered_img,min(w_ratio,h_ratio))
+            ratios = divide_2vec(self.get_available_size(), self._rendered_img.size)
+            self._rendered_img = pygame.transform.smoothscale_by(self._rendered_img,min(ratios))
         self._last_rendered_img = self.img_source
 
     def should_rerender(self):
@@ -60,10 +59,11 @@ class ImageWindow(Window):
             super().pre_render()
             self._render_img()
             if self.fit_mode == FitModes.CENTERED_FILL:
-                img_w, img_h = self._rendered_img.size
-                w, h = self.get_available_size()
-                centered = ( (w-img_w)//2, (h-img_h)//2 )
-                adj_position = self.rel_position(centered)
+                centered = scale_2vec(
+                    sub_2vec(self.get_available_size(), self._rendered_img.size),
+                    0.5
+                )
+                adj_position = self.rel_position(quant_2vec(centered))
             else:
                 adj_position = self.rel_position((0, 0))
             self._surface.blit(self._rendered_img, adj_position)

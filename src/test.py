@@ -6,6 +6,7 @@ from windows.window import Window
 from windows.grid import Grid
 from windows.textwindow import TextWindow
 from windows.imagewindow import ImageWindow, FitModes
+from windows.progressbar import ProgressBar
 
 from utils.colors import Colors
 
@@ -48,7 +49,7 @@ class Square(Window):
 if __name__ == "__main__":
     dotenv.load_dotenv()
     pygame.font.init()
-    mainfont = pygame.font.SysFont("CaskaydiaCove Nerd Font", 30)
+    mainfont = pygame.font.SysFont("CaskaydiaCove Nerd Font", 24)
 
     app = App((640, 480))
 
@@ -59,7 +60,7 @@ if __name__ == "__main__":
     test_gradient = LinearGradient((600,400), (10,10,10), (100,40,40))
 
     grid = Grid(
-        app, (20, 20), (600, 400), (2, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
+        app, (20, 20), (600, 440), (2, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
     )
     slots = grid.get_usable_slot_size()
 
@@ -73,7 +74,7 @@ if __name__ == "__main__":
 
     tw, th = slots
     subgrid = Grid(
-        grid, None, (tw * 2, th), (1, 2), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
+        grid, None, (tw * 2, th), (1, 3), margin=(10, 10, 10, 10), gap=(5, 5, 5, 5)
     )
 
     sgBRCM = CMRoundedBorders(subgrid.get_usable_slot_size(), 10)
@@ -85,7 +86,7 @@ if __name__ == "__main__":
         "Now playing:",
         mainfont,
         Colors.fg,
-        margin=(20, 20, 5, 5),
+        margin=(10, 10, 5, 5),
         background = test_gradient
     )
 
@@ -96,12 +97,24 @@ if __name__ == "__main__":
         "",
         mainfont,
         Colors.fg,
-        margin=(20, 20, 5, 5),
+        margin=(10, 10, 5, 5),
         background=test_gradient
     )
 
+    pb = ProgressBar(subgrid, None, 
+                     subgrid.get_usable_slot_size(), 
+                     0, 
+                     test_gradient,
+                     bar_size_prop=(0.8, 0.2),
+                     #margin=(15,15,5,5)
+                     )
+    pb.progress_update_fn = lambda: float(player.currently_playing().get("position"))/float(player.currently_playing().get("duration"))
+
     text1.clipping_masks.append(sgBRCM)
     text2.clipping_masks.append(sgBRCM)
+    pb.clipping_masks.append(sgBRCM)
+    pb.bar_clipping_masks.append(CMRoundedBorders(pb.get_bar_size(), 2))
+
 
     text2.text_update_fn = lambda: (lambda: f"{player.currently_playing().get('title')}")() #on {player.currently_playing().get('device')}")()
 
@@ -126,6 +139,8 @@ if __name__ == "__main__":
     grid.register_child(artwork, slot=(0, 0))
     grid.register_child(subgrid, slot=(0, 1))
     grid.register_child(textML, slot=(1, 0))
+    
     subgrid.register_child(text1, slot=(0, 0))
     subgrid.register_child(text2, slot=(0, 1))
+    subgrid.register_child(pb, slot=(0,2))
     app.run()

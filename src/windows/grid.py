@@ -1,3 +1,4 @@
+from utils.vec2 import add_2vec, divide_2vec_quant, multiply_2vec, sub_2vec
 from windows.window import Window
 
 
@@ -9,6 +10,7 @@ class Grid(Window):
         self.margin = margin
         self.gap = gap
         self._cols, self._rows = gridsize
+        self.gridsize = gridsize
 
         # setup a 2D array of null children
         for _ in range(self._cols):
@@ -27,19 +29,13 @@ class Grid(Window):
     def get_slot_size(self):
         # calculate the size of the slot. The slot ignores gaps, and delegates
         # caring about slots to other functions
-        width, height = self.get_available_size()
-        slot_width_col = width // self._cols
-        slot_height_row = height // self._rows
-        return slot_width_col, slot_height_row
+        return divide_2vec_quant(self.get_available_size(), self.gridsize) 
 
     def get_usable_slot_size(self):
         # Here we take gaps into consideration to inform the children
-        slot_width_col, slot_height_row = self.get_slot_size()
         # Gap TOP, BOTTOM, LEFT, RIGHT
         gt, gb, gl, gr = self.gap
-        effective_col = slot_width_col - gl - gr
-        effective_row = slot_height_row - gt - gb
-        return (effective_col, effective_row)
+        return sub_2vec(self.get_slot_size(), (gl + gr, gt + gb))
 
     def on_loop(self):
         # Step all existing children
@@ -50,7 +46,7 @@ class Grid(Window):
                 child.on_loop()
         if self.should_rerender():
             self._parent._rerender = True
-            self._parent.DEBUG_whoasked.append(self)
+            self._parent.DEBUG_whoasked.add(self)
 
     def on_render(self):
         super().pre_render()
@@ -61,19 +57,19 @@ class Grid(Window):
         # We only need "origin" gaps for calculations now
         # We allow children to overlap and don't bind them here!
         gt, _, gl, _ = self.gap
-        slot_width_col, slot_height_row = self.get_slot_size()
         for i, col in enumerate(self._children):
             for j, child in enumerate(col):
                 if not child:
                     continue
                 # We get position relative to in-window (accounting for margins)
-                slot_h, slot_w = self.rel_position(
-                    (slot_width_col * i, slot_height_row * j)
+                child_position = self.rel_position(
+                    multiply_2vec(self.get_slot_size(), (i,j))
                 )
                 # We now include the gaps
-                c_pos_h = slot_h + gt
-                c_pos_w = slot_w + gl
                 child.on_render()
                 # We render the child on top
-                self._surface.blit(child._surface, (c_pos_h, c_pos_w))
+                self._surface.blit(child._surface, 
+                                   add_2vec(child_position, (gt, gl))
+                                   # (c_pos_h, c_pos_w)
+                                  )
         self._rerender = False

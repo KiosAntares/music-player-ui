@@ -16,7 +16,7 @@ class App(Window):
         self.clipping_masks = []
         self._rerender = True
         self._parent = self
-        self.DEBUG_whoasked = []
+        self.DEBUG_whoasked = set()
 
     def init(self):
         pygame.init()
