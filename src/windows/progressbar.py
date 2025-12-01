@@ -1,5 +1,6 @@
 from windows.window import Window
 from utils.vec2 import multiply_2vec, scale_2vec, sub_2vec
+from utils.debug import error_println
 import pygame
 
 
@@ -35,7 +36,7 @@ class ProgressBar(Window):
             try:
                 self.progress = self.progress_update_fn()
             except Exception as e:
-                print(f"DEBUG: failed to run progress function: {e}")
+                error_println(f"Failed to run progress function: {e}")
         super().on_loop()
 
     def on_render(self):

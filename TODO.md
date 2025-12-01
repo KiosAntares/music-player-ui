@@ -29,3 +29,4 @@
 - [ ] "Jellyfin": implement load from config/.env
 ## Utils Library
 - [x] Refactor vec2 (coord) operations into a file
+- [x] Implement debug output function to selectively enable/disable debug printouts

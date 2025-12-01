@@ -1,5 +1,6 @@
 from effects.clipping_mask import ClippingMask
 from utils.colors import Colors
+from utils.debug import debug_println
 import pygame
 
 class CMRoundedBorders(ClippingMask):
@@ -11,7 +12,7 @@ class CMRoundedBorders(ClippingMask):
 
     def render_mask(self):
         if self.should_rerender():
-            print("[DEBUG] Rendering rounded CM")
+            debug_println("Rendering rounded CM")
             self._rendered_mask.fill(Colors.empty)
             self._last_rendered_state['border_radius'] = self.border_radius
             pygame.draw.rect(self._rendered_mask,

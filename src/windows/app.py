@@ -1,6 +1,7 @@
 import pygame
 from windows.window import Window
 from utils.colors import Colors
+from utils.debug import debug_println
 
 
 # The specialization of App is particularly intense

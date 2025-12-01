@@ -1,3 +1,4 @@
+from utils.debug import error_println
 from utils.vec2 import divide_2vec, quant_2vec, scale_2vec, sub_2vec
 from windows.window import Window
 from utils.os_utils import get_image
@@ -31,6 +32,8 @@ class ImageWindow(Window):
 
     def _render_img(self):
         self.DEBUG_whoasked = [self]
+        if not self.img_source:
+            return
         self._rendered_img = get_image(self.img_source)
         if self.fit_mode == FitModes.STRETCH:
             self._rendered_img = pygame.transform.smoothscale(self._rendered_img, self.get_available_size())
@@ -50,7 +53,7 @@ class ImageWindow(Window):
             try:
                 self.img_source = self.img_update_fn()
             except Exception as e:
-                print(f"DEBUG: failed to run image update function: {e}")
+                error_println(f"Failed to run image update function: {e}")
         super().on_loop()
 
     def on_render(self):
@@ -58,6 +61,9 @@ class ImageWindow(Window):
             self._parent._rerender = True
             super().pre_render()
             self._render_img()
+            if not self._rendered_img:
+                self._rerender = False
+                return
             if self.fit_mode == FitModes.CENTERED_FILL:
                 centered = scale_2vec(
                     sub_2vec(self.get_available_size(), self._rendered_img.size),
@@ -67,5 +73,5 @@ class ImageWindow(Window):
             else:
                 adj_position = self.rel_position((0, 0))
             self._surface.blit(self._rendered_img, adj_position)
-            self._rerender = True
+            self._rerender = False
         super().on_render()

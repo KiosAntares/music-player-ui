@@ -1,5 +1,6 @@
 from utils.vec2 import add_2vec, divide_2vec_quant, multiply_2vec, sub_2vec
 from windows.window import Window
+from utils.debug import debug_println
 
 
 class Grid(Window):
@@ -53,7 +54,7 @@ class Grid(Window):
         if not self.should_rerender():
             return
         self._parent._rerender = True
-        print(f"[DEBUG] I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
+        debug_println(f"I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
         # We only need "origin" gaps for calculations now
         # We allow children to overlap and don't bind them here!
         gt, _, gl, _ = self.gap

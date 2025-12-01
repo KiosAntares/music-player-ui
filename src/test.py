@@ -9,6 +9,7 @@ from windows.imagewindow import ImageWindow, FitModes
 from windows.progressbar import ProgressBar
 
 from utils.colors import Colors
+from utils.debug import debug_println
 
 from effects.rounded_borders import CMRoundedBorders
 from effects.linear_gradient import LinearGradient
@@ -19,6 +20,8 @@ from players.jellyfin_player import Jellyfin
 import datetime
 import dotenv
 import os
+
+# os.environ['DEBUG'] = '1'
 
 
 # MARGINS and GAPS:
@@ -37,7 +40,6 @@ import os
 
 
 
-
 class Square(Window):
     bg = (100, 100, 100)
 
@@ -47,6 +49,7 @@ class Square(Window):
 
 
 if __name__ == "__main__":
+    debug_println("Init...")
     dotenv.load_dotenv()
     pygame.font.init()
     mainfont = pygame.font.SysFont("CaskaydiaCove Nerd Font", 24)

@@ -1,5 +1,5 @@
 from windows.window import Window
-
+from utils.debug import debug_println, error_println
 
 class TextWindow(Window):
     def __init__(
@@ -40,7 +40,7 @@ class TextWindow(Window):
             try:
                 self.text = self.text_update_fn()
             except Exception as e:
-                print(f"DEBUG: failed to run text update function: {e}")
+                error_println(f"Failed to run text update function: {e}")
         super().on_loop()
 
     def on_render(self):

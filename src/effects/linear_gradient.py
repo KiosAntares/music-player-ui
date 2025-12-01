@@ -1,6 +1,6 @@
 import pygame
 from effects.graphic_surface import GraphicSurface
-
+from utils.debug import debug_println
 
 class LinearGradient(GraphicSurface):
     def __init__(self, size, color1, color2, direction='V'):
@@ -20,7 +20,7 @@ class LinearGradient(GraphicSurface):
         return False
 
     def render(self):
-        print("[DEBUG] Rendering gradient")
+        debug_println("Rendering gradient")
         self._last_rendered_state['color1'] = self.color1
         self._last_rendered_state['color2'] = self.color2
         self._last_rendered_state['direction'] = self.direction

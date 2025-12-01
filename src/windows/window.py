@@ -1,6 +1,7 @@
 import pygame
 from utils.colors import Colors
 from utils.vec2 import add_2vec, sub_2vec
+from utils.debug import debug_println
 
 class Window:
     def __init__(self, parent, position, size, margin=(0, 0, 0, 0), 
@@ -57,7 +58,7 @@ class Window:
     def on_render(self):
         if not self.should_rerender():
             return
-        print(f"[DEBUG] I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
+        debug_println(f"I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
         for child in self._children:
             if not child.should_rerender():
                 continue
