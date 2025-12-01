@@ -1,6 +1,6 @@
 # TODO
 ## UI Library
-- [ ] FlexyGrid (grid with support for non uniform grids)
+- [x] FlexyGrid (grid with support for non uniform grids)
 - [x] Progress Bar
 - [ ] "Tabs" (Windows that can be set as inactive)
 - [ ] Stateful children signaling

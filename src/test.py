@@ -7,6 +7,7 @@ from windows.grid import Grid
 from windows.textwindow import TextWindow
 from windows.imagewindow import ImageWindow, FitModes
 from windows.progressbar import ProgressBar
+# from windows.flexigrid import FlexiGrid
 
 from utils.colors import Colors
 from utils.debug import debug_println

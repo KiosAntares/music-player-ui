@@ -1,4 +1,4 @@
-from utils.debug import error_println
+from utils.debug import debug_println, error_println
 from utils.vec2 import divide_2vec, quant_2vec, scale_2vec, sub_2vec
 from windows.window import Window
 from utils.os_utils import get_image
@@ -29,6 +29,7 @@ class ImageWindow(Window):
         self._last_rendered_img = None
         self._rendered_img = None
         self.fit_mode = fit_mode
+        self._rerender = True
 
     def _render_img(self):
         self.DEBUG_whoasked = [self]
@@ -52,6 +53,8 @@ class ImageWindow(Window):
         if self.img_update_fn:
             try:
                 self.img_source = self.img_update_fn()
+                debug_println(f"Updated image to {self.img_source}")
+                # self._parent._rerender = True
             except Exception as e:
                 error_println(f"Failed to run image update function: {e}")
         super().on_loop()
