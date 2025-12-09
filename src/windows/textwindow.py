@@ -27,7 +27,7 @@ class TextWindow(Window):
         self.DEBUG_whoasked = [self]
         # first render of the text. If it never changes, we never need to render it again!
         self._rendered_text = self.font.render(
-            self.text, True, self.fontColor, wraplength=self.size[0]
+            self.text, True, self.fontColor, wraplength=int(self.size[0])
         )
         self._last_rendered_text = self.text
 

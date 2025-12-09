@@ -70,13 +70,13 @@ class FlexiGrid(Window):
             h_so_far = 0
             lastw = 0
             for j, child in enumerate(col):
-                if not child:
-                    continue
                 # We get position relative to in-window (accounting for margins)
                 child_position = self.rel_position((w_so_far, h_so_far))
                 lastw, childh = self.get_slot_size((i,j))
                 h_so_far += childh
                 # We now include the gaps
+                if not child:
+                    continue
                 child.on_render()
                 # We render the child on top
                 self._surface.blit(child._surface, 

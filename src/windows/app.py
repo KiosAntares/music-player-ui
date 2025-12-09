@@ -22,7 +22,7 @@ class App(Window):
     def init(self):
         pygame.init()
         self._clock = pygame.time.Clock()
-        self._surface = pygame.display.set_mode(self.size, pygame.HWSURFACE)
+        self._surface = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.FULLSCREEN)
         self._running = True
 
     # App is the only window to receive events and pass to the business logic
@@ -51,6 +51,7 @@ class App(Window):
     # Core loop
     def run(self):
         self.init()
+        pygame.display.toggle_fullscreen()
 
         # print(f"Children: {self._children}")
         while self._running:
