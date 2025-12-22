@@ -176,7 +176,7 @@ class Menu(Window):
         super().on_event(event)
         if event.type == pygame.KEYDOWN:
             match event.key:
-                case pygame.K_RETURN:
+                case pygame.K_e:
                     print("Running shutdown!")
                     run_cmd("sudo", "poweroff")
 
@@ -218,6 +218,6 @@ if __name__ == "__main__":
         
 
     app.register_keypress(pygame.K_f, (lambda _: toggle_display_menu()))
-    app.register_keypress(pygame.K_RETURN, menu.on_event)
+    app.register_keypress(pygame.K_e, menu.on_event)
     # grid._enabled = False
     app.run()
