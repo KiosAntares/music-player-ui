@@ -12,6 +12,7 @@ class Grid(Window):
         self.gap = gap
         self._cols, self._rows = gridsize
         self.gridsize = gridsize
+        
 
         # setup a 2D array of null children
         for _ in range(self._cols):
@@ -39,6 +40,8 @@ class Grid(Window):
         return sub_2vec(self.get_slot_size(), (gl + gr, gt + gb))
 
     def on_loop(self):
+        if not self._enabled:
+            return
         # Step all existing children
         for i, col in enumerate(self._children):
             for j, child in enumerate(col):
@@ -50,6 +53,9 @@ class Grid(Window):
             self._parent.DEBUG_whoasked.add(self)
 
     def on_render(self):
+        if not self._enabled:
+            self._rerender = False
+            return 
         super().pre_render()
         if not self.should_rerender():
             return

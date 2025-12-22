@@ -10,13 +10,15 @@ class App(Window):
         self._running = True
         self._surface = None
         self.size = self.width, self.height = size
-        self.framerate = 1
+        self.framerate = 5
         self._children = []
         self._clock = None
         self.margin = (0, 0, 0, 0)
         self.clipping_masks = []
+        self._enabled = True
         self._rerender = True
         self._parent = self
+        self._registered_keypress_events = {}
         self.DEBUG_whoasked = set()
 
     def init(self):
@@ -29,6 +31,14 @@ class App(Window):
     def on_event(self, event):
         if event.type == pygame.QUIT:
             self._running = False
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key in self._registered_keypress_events:
+                self._registered_keypress_events[event.key](event)
+
+
+    def register_keypress(self,key, f):
+        self._registered_keypress_events[key] = f
 
     def on_loop(self):
         super().on_loop()

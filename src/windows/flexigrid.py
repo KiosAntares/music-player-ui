@@ -18,6 +18,7 @@ class FlexiGrid(Window):
 
         self.gridsize = (len(self.grid_dimensions_w), len(self.grid_dimensions_h))
         self._rerender = True
+        self._enabled = True
 
         # setup a 2D array of null children
         for _ in self.grid_dimensions_w:
@@ -44,6 +45,8 @@ class FlexiGrid(Window):
         return sub_2vec(self.get_slot_size(slot), (gl + gr, gt + gb))
 
     def on_loop(self):
+        if not self._enabled:
+            return
         # Step all existing children
         for i, col in enumerate(self._children):
             for j, child in enumerate(col):
@@ -56,6 +59,10 @@ class FlexiGrid(Window):
             self._parent.DEBUG_whoasked.add(self)
 
     def on_render(self):
+        if not self._enabled: 
+            self._rerender = False
+            return
+
         super().pre_render()
         if not self.should_rerender():
             return

@@ -13,6 +13,7 @@ class Window:
         self.background = background
         self.clipping_masks = []
 
+        self._enabled = True
         self._surface = pygame.Surface(self.size, pygame.SRCALPHA | pygame.HWSURFACE)
         self._children = []
         # Usually, children register themselves for a better experience
@@ -20,6 +21,7 @@ class Window:
         self._parent.register_child(self)
         self._rerender = False
         self.DEBUG_whoasked = set()
+
 
     def register_child(self, child):
         self._children.append(child)
@@ -34,8 +36,29 @@ class Window:
         (*origin, _, _) = self.margin
         return add_2vec(position, origin)
 
+    def disable(self):
+        self._enabled = False
+        self.pre_render()
+        self._parent._rerender = True
+
+    def enable(self):
+        self._enabled = True
+
+    def on_event(self, event):
+        if not self._enabled:
+            return
+        pass
+
+    def toggle_enabled(self):
+        print("Toggling enabled status")
+        self._enabled = not self._enabled
+        self.pre_render()
+        self._parent._rerender = True
+
     # By default, windows forward update events to their children
     def on_loop(self):
+        if not self._enabled:
+            return
         for child in self._children:
             child.on_loop()
         if self.should_rerender():
@@ -56,6 +79,9 @@ class Window:
     # By default, windows delagate the rendering to the children, and then place
     # them at the requested position on their surface.
     def on_render(self):
+        if not self._enabled:
+            self._rerender = False
+            return
         if not self.should_rerender():
             return
         debug_println(f"I'm rerendering! ({type(self)}) because of {self.DEBUG_whoasked}")
