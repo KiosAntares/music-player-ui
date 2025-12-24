@@ -173,6 +173,8 @@ class Menu(Window):
         return super().toggle_enabled()
 
     def on_event(self, event):
+        if not self._enabled: 
+            return
         super().on_event(event)
         if event.type == pygame.KEYDOWN:
             match event.key:
