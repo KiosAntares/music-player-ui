@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
   buildInputs = with pkgs; [
     glib
@@ -12,11 +12,12 @@ pkgs.mkShell {
     json-glib
     vte-gtk4
     cava
-    libxml2 
+    libxml2
 
     meson
     ninja
     pkg-config
+    gdb
   ];
 
   GIO_MODULE_DIR = "${pkgs.glib-networking}/lib/gio/modules";

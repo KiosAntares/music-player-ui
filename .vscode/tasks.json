@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "nix-shell --run 'ninja -C build'",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "setup",
+      "type": "shell",
+      "command": "nix-shell --run 'meson setup build'",
+      "problemMatcher": []
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "nix-shell --run 'ninja -C build && ./build/player'",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "dependsOn": "build",
+      "problemMatcher": []
+    }
+  ]
+}

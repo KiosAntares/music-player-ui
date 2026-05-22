@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug player",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/player",
+      "preLaunchTask": "build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false
+    },
+    {
+      "name": "Run player",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "nix-shell --run 'ninja -C build && ./build/player'",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
