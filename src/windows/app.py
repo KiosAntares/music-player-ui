@@ -23,6 +23,7 @@ class App(Window):
 
     def init(self):
         pygame.init()
+        pygame.mixer.quit()
         self._clock = pygame.time.Clock()
         self._surface = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.FULLSCREEN)
         self._running = True
