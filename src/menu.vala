@@ -12,24 +12,24 @@ public class MenuPage : Gtk.Box {
 
         // Define your categories and entries
         data = new HashTable<string, GLib.List<string>> (str_hash, str_equal);
-        
+
         GLib.List<string> server_entries = new GLib.List<string> ();
         server_entries.append ("Poweroff");
         server_entries.append ("Reboot");
         data.insert ("Device", (owned) server_entries);
-        
+
         GLib.List<string> display_entries = new GLib.List<string> ();
         display_entries.append ("Player");
         display_entries.append ("Audio Display");
         display_entries.append ("Lyrics");
         data.insert ("Display", (owned) display_entries);
-        
+
         GLib.List<string> player_entries = new GLib.List<string> ();
         player_entries.append ("Spotify");
         player_entries.append ("Jellyfin");
         player_entries.append ("Bluetooth");
         data.insert ("Player", (owned) player_entries);
-        
+
         GLib.List<string> playback_entries = new GLib.List<string> ();
         playback_entries.append ("Poll Interval");
         playback_entries.append ("Default Volume");
@@ -120,7 +120,7 @@ public class MenuPage : Gtk.Box {
 
         unowned GLib.List<string> entries = data.get (category);
         if (entries == null) return;
-        
+
         foreach (var entry in entries) {
             var row = new Gtk.ListBoxRow ();
             var label = new Gtk.Label (entry);
@@ -130,7 +130,7 @@ public class MenuPage : Gtk.Box {
             label.margin_bottom = 10;
             row.child = label;
             entry_list.append (row);
-        } 
+        }
     }
 
     private void navigate (int direction) {

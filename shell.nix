@@ -18,6 +18,8 @@ pkgs.mkShell {
     ninja
     pkg-config
     gdb
+    vala-lint
+    vala-language-server
   ];
 
   GIO_MODULE_DIR = "${pkgs.glib-networking}/lib/gio/modules";

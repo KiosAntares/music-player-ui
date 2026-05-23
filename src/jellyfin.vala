@@ -109,12 +109,12 @@ public class Jellyfin {
             double length = item.get_int_member_with_default ("RunTimeTicks", 0)
                 / 10000000.0;
 
-            var title      = item.get_string_member_with_default ("Name", "");
-            var artist     = item.get_string_member_with_default ("AlbumArtist", "");
-            var album      = item.get_string_member_with_default ("Album", "");
-            var album_id   = item.get_string_member_with_default ("AlbumId", "");
-            var album_tag  = item.get_string_member_with_default ("AlbumPrimaryImageTag", "");
-            var track_id   = item.get_string_member_with_default ("Id", "");
+            var title = item.get_string_member_with_default ("Name", "");
+            var artist = item.get_string_member_with_default ("AlbumArtist", "");
+            var album = item.get_string_member_with_default ("Album", "");
+            var album_id = item.get_string_member_with_default ("AlbumId", "");
+            var album_tag = item.get_string_member_with_default ("AlbumPrimaryImageTag", "");
+            var track_id = item.get_string_member_with_default ("Id", "");
             var track_number = (int) item.get_int_member_with_default ("IndexNumber", 0);
 
             string? track_tag = null;
@@ -138,27 +138,27 @@ public class Jellyfin {
                 item.get_array_member ("MediaStreams").foreach_element ((a, j, stream_node) => {
                     var stream = stream_node.get_object ();
                     if (stream.get_string_member_with_default ("Type", "") == "Audio") {
-                        codec       = stream.get_string_member_with_default ("DisplayTitle", "");
+                        codec = stream.get_string_member_with_default ("DisplayTitle", "");
                         sample_rate = (int) stream.get_int_member_with_default ("SampleRate", 0);
-                        bit_depth   = (int) stream.get_int_member_with_default ("BitDepth", 0);
+                        bit_depth = (int) stream.get_int_member_with_default ("BitDepth", 0);
                     }
                 });
             }
 
             var info = new SessionInfo () {
-                status       = status,
-                device       = device_name,
-                duration     = length,
-                position     = elapsed,
-                title        = title,
-                artist       = artist,
-                album        = album,
+                status = status,
+                device = device_name,
+                duration = length,
+                position = elapsed,
+                title = title,
+                artist = artist,
+                album = album,
                 track_number = track_number,
-                art_url      = cover_url,
-                codec        = codec,
-                sample_rate  = sample_rate,
-                bit_depth    = bit_depth,
-                session_id   = s.get_string_member_with_default ("Id", "")
+                art_url = cover_url,
+                codec = codec,
+                sample_rate = sample_rate,
+                bit_depth = bit_depth,
+                session_id = s.get_string_member_with_default ("Id", "")
             };
             out += info;
         });

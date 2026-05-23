@@ -30,7 +30,7 @@ public class PlayerApp : Gtk.Application {
             resizable = false
         };
 
-        var key_controller = new Gtk.EventControllerKey();
+        var key_controller = new Gtk.EventControllerKey ();
         key_controller.propagation_phase = Gtk.PropagationPhase.CAPTURE;
         (window as Gtk.Widget).add_controller (key_controller);
         key_controller.key_pressed.connect ((keyval, keycode, state) => {
@@ -152,7 +152,7 @@ public class PlayerApp : Gtk.Application {
 
         progress = new Gtk.ProgressBar ();
         progress.fraction = 0.0;
-        
+
         play_button = new Gtk.Button ();
         play_button.icon_name = "media-playback-start-symbolic";
         play_button.halign = Gtk.Align.CENTER;
@@ -213,12 +213,12 @@ public class PlayerApp : Gtk.Application {
             stack.visible_child_name = page_name;
         });
 
-        stack = new Gtk.Stack();
+        stack = new Gtk.Stack ();
         stack.margin_top = 20;
         stack.margin_bottom = 20;
-        stack.add_named(main_box, "player");
-        stack.add_named(menu_page, "menu");
-        stack.add_named(cava, "cava");
+        stack.add_named (main_box, "player");
+        stack.add_named (menu_page, "menu");
+        stack.add_named (cava, "cava");
         stack.transition_type = Gtk.StackTransitionType.SLIDE_UP_DOWN;
         window.child = stack;
         window.present ();
@@ -235,27 +235,27 @@ public class PlayerApp : Gtk.Application {
         try {
             var info = yield jf.currently_playing ();
             if (info == null) {
-                title_label.label  = "Nothing playing";
+                title_label.label = "Nothing playing";
                 artist_label.label = "";
-                album_label.label  = "";
-                progress.fraction  = 0.0;
-                codec_label.label  = "";
+                album_label.label = "";
+                progress.fraction = 0.0;
+                codec_label.label = "";
                 play_button.icon_name = "media-playback-start-symbolic";
                 current_art_url = null;
                 album_art.paintable = null;
                 return;
             }
 
-            title_label.label  = info.title;
+            title_label.label = info.title;
             artist_label.label = info.artist;
-            album_label.label  = info.album;
-            progress.fraction  = info.duration > 0
+            album_label.label = info.album;
+            progress.fraction = info.duration > 0
                 ? (info.position / info.duration).clamp (0.0, 1.0)
                 : 0.0;
-            codec_label.label  = "%s\n%d Hz / %d bit".printf (
+            codec_label.label = "%s\n%d Hz / %d bit".printf (
                 info.codec, info.sample_rate, info.bit_depth);
 
-            play_button.icon_name = info.status == "Paused" 
+            play_button.icon_name = info.status == "Paused"
                 ? "media-playback-pause-symbolic"
                 : "media-playback-start-symbolic";
 
@@ -267,11 +267,11 @@ public class PlayerApp : Gtk.Application {
 
         } catch (Error e) {
             warning ("Refresh error: %s", e.message);
-            title_label.label  = "Nothing playing";
+            title_label.label = "Nothing playing";
             artist_label.label = "";
-            album_label.label  = "";
-            progress.fraction  = 0.0;
-            codec_label.label  = "";
+            album_label.label = "";
+            progress.fraction = 0.0;
+            codec_label.label = "";
             play_button.icon_name = "media-playback-start-symbolic";
             current_art_url = null;
             album_art.paintable = null;
@@ -312,4 +312,3 @@ public class PlayerApp : Gtk.Application {
         return new PlayerApp ().run (args);
     }
 }
-
