@@ -165,6 +165,13 @@ public class MenuPage : Gtk.Box {
             if (label == "Audio Display") {
                 page_requested ("cava");
             };
+            if (label == "Poweroff"){
+                try {
+                    Process.spawn_command_line_async ("systemctl poweroff");
+                } catch (SpawnError e) {
+                    warning ("Failed to run command: %s", e.message);
+                }
+            }
         }
     }
 
