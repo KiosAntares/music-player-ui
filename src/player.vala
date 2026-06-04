@@ -82,7 +82,7 @@ public class PlayerApp : Gtk.Application {
         });
 
         var css = new Gtk.CssProvider ();
-        css.load_from_string ("""
+        css.load_from_data ("""
             * {
                 font-family: "CaskaydiaCove Nerd Font";
                 font-size: 1.2em;
@@ -94,7 +94,7 @@ public class PlayerApp : Gtk.Application {
                 -gtk-icon-size: 32px;
                 padding: 0;
             }
-        """);
+        """.data);
 
         Gtk.StyleContext.add_provider_for_display (
             Gdk.Display.get_default (),
@@ -117,7 +117,8 @@ public class PlayerApp : Gtk.Application {
 
 
         album_art = new Gtk.Picture ();
-        album_art.content_fit = Gtk.ContentFit.CONTAIN;
+	album_art.keep_aspect_ratio = true;
+        // album_art.content_fit = Gtk.ContentFit.CONTAIN;
         album_art.hexpand = true;
         album_art.vexpand = true;
         art_container.append (album_art);
