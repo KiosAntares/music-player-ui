@@ -12,9 +12,15 @@ dependencies = [
 ]
 
 sources = files(
+  'src/config.vala',
+  'src/session-info.vala',
   'src/jellyfin.vala',
-  'src/menu.vala',
-  'src/player.vala',
+  'src/system-actions.vala',
+  'src/cava.vala',
+  'src/style.vala',
+  'src/menu-page.vala',
+  'src/player-page.vala',
+  'src/application.vala',
 )
 
 executable('player',

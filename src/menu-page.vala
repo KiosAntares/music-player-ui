@@ -137,22 +137,9 @@ public class MenuPage : Gtk.Box {
 
     private string entry_label (string entry) {
         if (entry == "VNC Server") {
-            return "VNC Server: %s".printf (vnc_running () ? "On" : "Off");
+            return "VNC Server: %s".printf (SystemActions.vnc_running () ? "On" : "Off");
         }
         return entry;
-    }
-
-    private bool vnc_running () {
-        try {
-            string standard_output;
-            string standard_error;
-            int exit_status;
-            Process.spawn_command_line_sync ("pgrep -x x11vnc", out standard_output, out standard_error, out exit_status);
-            Process.check_wait_status (exit_status);
-            return true;
-        } catch (Error e) {
-            return false;
-        }
     }
 
     private void navigate (int direction) {
@@ -188,11 +175,10 @@ public class MenuPage : Gtk.Box {
                 page_requested ("cava");
             };
             if (entry == "Poweroff"){
-                try {
-                    Process.spawn_command_line_async ("systemctl poweroff");
-                } catch (SpawnError e) {
-                    warning ("Failed to run command: %s", e.message);
-                }
+                SystemActions.poweroff ();
+            }
+            if (entry == "Reboot"){
+                SystemActions.reboot ();
             }
             if (entry == "VNC Server"){
                 toggle_vnc ();
@@ -201,14 +187,10 @@ public class MenuPage : Gtk.Box {
     }
 
     private void toggle_vnc () {
-        try {
-            if (vnc_running ()) {
-                Process.spawn_command_line_async ("pkill x11vnc");
-            } else {
-                Process.spawn_command_line_async ("x11vnc -display :0 -forever -shared -bg");
-            }
-        } catch (SpawnError e) {
-            warning ("Failed to run command: %s", e.message);
+        if (SystemActions.vnc_running ()) {
+            SystemActions.stop_vnc ();
+        } else {
+            SystemActions.start_vnc ();
         }
 
         int index = entry_list.get_selected_row () != null ? entry_list.get_selected_row ().get_index () : 0;
