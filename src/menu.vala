@@ -16,6 +16,7 @@ public class MenuPage : Gtk.Box {
         GLib.List<string> server_entries = new GLib.List<string> ();
         server_entries.append ("Poweroff");
         server_entries.append ("Reboot");
+        server_entries.append ("VNC Server");
         data.insert ("Device", (owned) server_entries);
 
         GLib.List<string> display_entries = new GLib.List<string> ();
@@ -123,13 +124,34 @@ public class MenuPage : Gtk.Box {
 
         foreach (var entry in entries) {
             var row = new Gtk.ListBoxRow ();
-            var label = new Gtk.Label (entry);
+            var label = new Gtk.Label (entry_label (entry));
             label.xalign = 0;
             label.margin_start = 12;
             label.margin_top = 10;
             label.margin_bottom = 10;
             row.child = label;
+            row.set_data ("entry", entry);
             entry_list.append (row);
+        }
+    }
+
+    private string entry_label (string entry) {
+        if (entry == "VNC Server") {
+            return "VNC Server: %s".printf (vnc_running () ? "On" : "Off");
+        }
+        return entry;
+    }
+
+    private bool vnc_running () {
+        try {
+            string standard_output;
+            string standard_error;
+            int exit_status;
+            Process.spawn_command_line_sync ("pgrep -x x11vnc", out standard_output, out standard_error, out exit_status);
+            Process.check_wait_status (exit_status);
+            return true;
+        } catch (Error e) {
+            return false;
         }
     }
 
@@ -160,19 +182,38 @@ public class MenuPage : Gtk.Box {
             // Handle entry selection — expand here for actual actions
             var row = entry_list.get_selected_row ();
             if (row == null) return;
-            var label = (row.child as Gtk.Label).label;
-            print ("Selected: %s\n", label);
-            if (label == "Audio Display") {
+            var entry = row.get_data<string> ("entry");
+            print ("Selected: %s\n", entry);
+            if (entry == "Audio Display") {
                 page_requested ("cava");
             };
-            if (label == "Poweroff"){
+            if (entry == "Poweroff"){
                 try {
                     Process.spawn_command_line_async ("systemctl poweroff");
                 } catch (SpawnError e) {
                     warning ("Failed to run command: %s", e.message);
                 }
             }
+            if (entry == "VNC Server"){
+                toggle_vnc ();
+            }
         }
+    }
+
+    private void toggle_vnc () {
+        try {
+            if (vnc_running ()) {
+                Process.spawn_command_line_async ("pkill x11vnc");
+            } else {
+                Process.spawn_command_line_async ("x11vnc -display :0 -forever -shared -bg");
+            }
+        } catch (SpawnError e) {
+            warning ("Failed to run command: %s", e.message);
+        }
+
+        int index = entry_list.get_selected_row () != null ? entry_list.get_selected_row ().get_index () : 0;
+        populate_entries ("Device");
+        entry_list.select_row (entry_list.get_row_at_index (index));
     }
 
     private void on_back () {

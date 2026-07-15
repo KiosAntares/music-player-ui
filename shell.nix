@@ -13,6 +13,7 @@ pkgs.mkShell {
     vte-gtk4
     cava
     libxml2
+    x11vnc
 
     meson
     ninja

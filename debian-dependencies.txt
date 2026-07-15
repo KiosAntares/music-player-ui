@@ -7,3 +7,4 @@ libsoup-3.0-dev
 libgdk-pixbuf-2.0-dev
 libjson-glib-dev
 libvte-2.91-gtk4-dev
+x11vnc
