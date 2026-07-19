@@ -15,6 +15,8 @@ sources = files(
   'src/config.vala',
   'src/session-info.vala',
   'src/jellyfin.vala',
+  'src/bluetooth-media.vala',
+  'src/artwork.vala',
   'src/system-actions.vala',
   'src/cava.vala',
   'src/style.vala',

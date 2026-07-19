@@ -14,7 +14,10 @@ public class PlayerPage : Gtk.Box {
     private Gtk.ProgressBar progress;
     private Gtk.Label codec_label;
     private Gtk.Button play_button;
-    private string? current_art_url = null;
+    // Identifies the track whose art is currently shown, so we fetch cover art
+    // at most once per song. Holds the art URL (Jellyfin) or an artist/album/
+    // title key (Bluetooth, whose art is looked up separately).
+    private string? current_track_key = null;
 
     public PlayerPage (Jellyfin jf) {
         Object (orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
@@ -113,7 +116,15 @@ public class PlayerPage : Gtk.Box {
 
     private async void refresh () {
         try {
-            var info = yield jf.currently_playing ();
+            // Strictly follow the Player -> Bluetooth menu selection: in
+            // bluetooth mode show the connected device's track, otherwise the
+            // Jellyfin session. No implicit switching on connection state.
+            SessionInfo? info;
+            if (SystemActions.bt_receiver_running ()) {
+                info = BluetoothMedia.currently_playing ();
+            } else {
+                info = yield jf.currently_playing ();
+            }
             if (info == null) {
                 clear ();
                 return;
@@ -125,17 +136,27 @@ public class PlayerPage : Gtk.Box {
             progress.fraction = info.duration > 0
                 ? (info.position / info.duration).clamp (0.0, 1.0)
                 : 0.0;
-            codec_label.label = "%s\n%d Hz / %d bit".printf (
-                info.codec, info.sample_rate, info.bit_depth);
+            codec_label.label = info.sample_rate > 0
+                ? "%s\n%d Hz / %d bit".printf (info.codec, info.sample_rate, info.bit_depth)
+                : info.codec;
 
             play_button.icon_name = info.status == "Paused"
                 ? "media-playback-pause-symbolic"
                 : "media-playback-start-symbolic";
 
-            // Only reload art if the URL changed
-            if (info.art_url != null && info.art_url != current_art_url) {
-                current_art_url = info.art_url;
-                yield load_image_async (info.art_url, album_art);
+            // Resolve album art. Jellyfin gives a direct URL; bluetooth exposes
+            // none, so look one up from a public API by track metadata. Keyed on
+            // the track so we fetch at most once per song, not on every poll.
+            string track_key = info.art_url ?? "%s|%s|%s".printf (info.artist, info.album, info.title);
+            if (track_key != current_track_key) {
+                current_track_key = track_key;
+                album_art.paintable = null;
+                string? art_url = info.art_url;
+                if (art_url == null && info.title != "")
+                    art_url = yield Artwork.lookup (info.artist, info.album, info.title);
+                // Guard against the track changing while the lookup was in flight.
+                if (art_url != null && current_track_key == track_key)
+                    yield load_image_async (art_url, album_art);
             }
 
         } catch (Error e) {
@@ -151,7 +172,7 @@ public class PlayerPage : Gtk.Box {
         progress.fraction = 0.0;
         codec_label.label = "";
         play_button.icon_name = "media-playback-start-symbolic";
-        current_art_url = null;
+        current_track_key = null;
         album_art.paintable = null;
     }
 
