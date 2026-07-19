@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# bt-receiver — toggle the onboard Bluetooth adapter as an A2DP audio receiver.
+#
+# Makes the box act as a Bluetooth speaker: phones pair and stream audio to it,
+# which PipeWire then plays out the default output (through EasyEffects -> DAC).
+#
+#   bt-receiver on      power on, become discoverable + pairable, and run an
+#                       auto-accept agent so devices can pair without a prompt
+#   bt-receiver off     stop accepting connections and hide the adapter
+#   bt-receiver status  print "on" or "off"
+#
+# State is defined by whether the auto-accept agent (bt-agent) is running, which
+# is what the player UI checks to render the On/Off label.
+
+agent_running () { pgrep -x bt-agent >/dev/null 2>&1; }
+
+case "${1:-status}" in
+    on)
+        bluetoothctl power on             >/dev/null
+        bluetoothctl discoverable-timeout 0 >/dev/null   # stay visible indefinitely
+        bluetoothctl pairable on          >/dev/null
+        bluetoothctl discoverable on      >/dev/null
+        # Auto-accept pairing/authorization requests (headless "Just Works").
+        agent_running || setsid bt-agent -c NoInputNoOutput >/dev/null 2>&1 &
+        ;;
+    off)
+        bluetoothctl discoverable off     >/dev/null 2>&1
+        bluetoothctl pairable off         >/dev/null 2>&1
+        # bt-agent does not always honour SIGTERM; fall back to SIGKILL.
+        pkill -x bt-agent 2>/dev/null
+        sleep 0.3
+        pkill -9 -x bt-agent 2>/dev/null
+        ;;
+    status)
+        if agent_running; then echo on; else echo off; fi
+        ;;
+    *)
+        echo "usage: bt-receiver {on|off|status}" >&2
+        exit 2
+        ;;
+esac

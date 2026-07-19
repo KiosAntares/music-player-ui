@@ -3,6 +3,12 @@ public class MenuPage : Gtk.Box {
     private Gtk.ListBox entry_list;
     private bool in_entries = false;
 
+    // Optimistic On/Off override for a just-toggled service, so the row reflects
+    // the requested state immediately instead of lagging behind a background
+    // command that takes a moment to take effect.
+    private string? pending_toggle = null;
+    private bool pending_state = false;
+
     private HashTable<string, GLib.List<string>> data;
 
     public signal void page_requested (string page_name);
@@ -137,9 +143,21 @@ public class MenuPage : Gtk.Box {
 
     private string entry_label (string entry) {
         if (entry == "VNC Server") {
-            return "VNC Server: %s".printf (SystemActions.vnc_running () ? "On" : "Off");
+            return "VNC Server: %s".printf (service_on (entry) ? "On" : "Off");
+        }
+        if (entry == "Bluetooth") {
+            return "Bluetooth: %s".printf (service_on (entry) ? "On" : "Off");
         }
         return entry;
+    }
+
+    // Logical On/Off for a toggleable service, honouring an in-flight optimistic
+    // toggle before falling back to the real system state.
+    private bool service_on (string entry) {
+        if (pending_toggle == entry) return pending_state;
+        if (entry == "VNC Server") return SystemActions.vnc_running ();
+        if (entry == "Bluetooth") return SystemActions.bt_receiver_running ();
+        return false;
     }
 
     private void navigate (int direction) {
@@ -180,21 +198,41 @@ public class MenuPage : Gtk.Box {
             if (entry == "Reboot"){
                 SystemActions.reboot ();
             }
-            if (entry == "VNC Server"){
-                toggle_vnc ();
+            if (entry == "VNC Server" || entry == "Bluetooth"){
+                toggle_service (entry);
             }
         }
     }
 
-    private void toggle_vnc () {
-        if (SystemActions.vnc_running ()) {
-            SystemActions.stop_vnc ();
-        } else {
-            SystemActions.start_vnc ();
+    private void toggle_service (string entry) {
+        bool target = !service_on (entry);
+        if (entry == "VNC Server") {
+            if (target) SystemActions.start_vnc (); else SystemActions.stop_vnc ();
+        } else if (entry == "Bluetooth") {
+            if (target) SystemActions.start_bt_receiver (); else SystemActions.stop_bt_receiver ();
         }
 
-        int index = entry_list.get_selected_row () != null ? entry_list.get_selected_row ().get_index () : 0;
-        populate_entries ("Device");
+        // Show the requested state right away, then reconcile with the real
+        // system state once the background command has had time to take effect.
+        pending_toggle = entry;
+        pending_state = target;
+        refresh_current_entries ();
+        GLib.Timeout.add (2500, () => {
+            pending_toggle = null;
+            refresh_current_entries ();
+            return GLib.Source.REMOVE;
+        });
+    }
+
+    // Re-render the entries of the currently selected category, preserving the
+    // highlighted row, so a toggled On/Off label updates in place.
+    private void refresh_current_entries () {
+        var cat_row = category_list.get_selected_row ();
+        if (cat_row == null) return;
+        var category = cat_row.get_data<string> ("category");
+        int index = entry_list.get_selected_row () != null
+            ? entry_list.get_selected_row ().get_index () : 0;
+        populate_entries (category);
         entry_list.select_row (entry_list.get_row_at_index (index));
     }
 

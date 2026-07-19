@@ -10,6 +10,21 @@ public class SystemActions {
         }
     }
 
+    // True if at least one process with the exact name is running.
+    private static bool process_running (string name) {
+        try {
+            string standard_output;
+            string standard_error;
+            int exit_status;
+            GLib.Process.spawn_command_line_sync ("pgrep -x %s".printf (name),
+                out standard_output, out standard_error, out exit_status);
+            GLib.Process.check_wait_status (exit_status);
+            return true;
+        } catch (Error e) {
+            return false;
+        }
+    }
+
     public static void poweroff () {
         run ("systemctl poweroff");
     }
@@ -27,17 +42,23 @@ public class SystemActions {
     }
 
     public static bool vnc_running () {
-        try {
-            string standard_output;
-            string standard_error;
-            int exit_status;
-            GLib.Process.spawn_command_line_sync ("pgrep -x x11vnc",
-                out standard_output, out standard_error, out exit_status);
-            GLib.Process.check_wait_status (exit_status);
-            return true;
-        } catch (Error e) {
-            return false;
-        }
+        return process_running ("x11vnc");
+    }
+
+    // Bluetooth A2DP receiver mode: make the onboard adapter discoverable and
+    // pairable so phones can stream audio to this box. Delegated to the
+    // bt-receiver helper script (multi-step: adapter state + auto-accept agent).
+    public static void start_bt_receiver () {
+        run ("bt-receiver on");
+    }
+
+    public static void stop_bt_receiver () {
+        run ("bt-receiver off");
+    }
+
+    // Receiver mode is "on" exactly while the auto-accept agent is running.
+    public static bool bt_receiver_running () {
+        return process_running ("bt-agent");
     }
 
     public static void change_volume (int delta) {
