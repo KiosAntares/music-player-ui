@@ -17,6 +17,7 @@ sources = files(
   'src/jellyfin.vala',
   'src/bluetooth-media.vala',
   'src/artwork.vala',
+  'src/art-cache.vala',
   'src/system-actions.vala',
   'src/cava.vala',
   'src/style.vala',

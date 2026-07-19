@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv *)",
+      "Bash(ping -c 2 -W 2 192.168.1.150)",
+      "Bash(nix-shell -p sshpass --run 'sshpass -p orangepi ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 orangepi@192.168.1.150 \"echo CONNECTED; . /etc/os-release 2>/dev/null; echo DISTRO=\\\\$ID \\\\$VERSION_ID PRETTY=\\\\\"\\\\$PRETTY_NAME\\\\\"; echo ARCH=\\\\$\\(uname -m\\); echo -n EASYEFFECTS=; command -v easyeffects || echo none; echo -n SUDO=; echo orangepi | sudo -S -p \\\\\"\\\\\" true 2>/dev/null && echo ok || echo needs-password\"')",
+      "Bash(nix-shell -p sshpass --run 'sshpass -p orangepi ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 orangepi@192.168.1.150 \"command -v easyeffects && easyeffects --version 2>&1 | head -1; echo -n PIPEWIRE=; command -v pipewire || echo not-found\"')",
+      "Bash(git ls-tree *)",
+      "Bash(chmod +x /home/kios/Programming/music-player-ui/scripts/bt-receiver)",
+      "Bash(nix-shell --run \"ninja -C build\")",
+      "Bash(nix-shell -p sshpass --run \"sshpass -p orangepi ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 orangepi@192.168.1.150 'cd ~/music-player-ui 2>/dev/null || cd ~/Programming/music-player-ui; pwd; git pull --ff-only origin main 2>&1 | tail -5'\")",
+      "Bash(nix-shell -p sshpass --run 'sshpass -p orangepi ssh -o StrictHostKeyChecking=no orangepi@192.168.1.150 '\\\\''OLD=$\\(pgrep -x player\\); pkill -x player; sleep 1; cd ~/music-player-ui; DISPLAY=:0 setsid ./build/player >/dev/null 2>&1 < /dev/null & sleep 2; NEW=$\\(pgrep -x player\\); echo \"old=$OLD new=$NEW\"; if [ -n \"$NEW\" ]; then echo RESTARTED OK; else echo FAILED; fi'\\\\''')",
+      "Bash(python3 -)",
+      "Bash(nix-shell -p sshpass --run \"sshpass -p orangepi ssh -o StrictHostKeyChecking=no orangepi@192.168.1.150 'cd ~/music-player-ui && git pull --ff-only origin main 2>&1 | tail -2 && ninja -C build 2>&1 | tail -1 && echo --- && curl -s -o /dev/null -w \\\\\"musicbrainz %{http_code}\\\\n\\\\\" --max-time 10 \\\\\"https://musicbrainz.org/ws/2/release?query=release:test&fmt=json&limit=1\\\\\" && curl -s -o /dev/null -w \\\\\"coverartarchive %{http_code}\\\\n\\\\\" --max-time 10 \\\\\"https://coverartarchive.org/release/2cb55d3b-efe9-46df-a3c5-1fe8fcae19f2\\\\\"'\")",
+      "Bash(nix-shell -p sshpass --run 'sshpass -p orangepi ssh -o StrictHostKeyChecking=no orangepi@192.168.1.150 '\\\\''OLD=$\\(pgrep -x player\\); pkill -x player; sleep 1; cd ~/music-player-ui; DISPLAY=:0 setsid ./build/player >/dev/null 2>&1 < /dev/null & sleep 2; NEW=$\\(pgrep -x player\\); echo \"old=$OLD new=$NEW\"; [ -n \"$NEW\" ] && echo RESTARTED OK || echo FAILED'\\\\''')",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'Cache album art on disk *)",
+      "Bash(git push *)"
+    ]
+  }
+}

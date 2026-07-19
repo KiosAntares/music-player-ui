@@ -144,19 +144,13 @@ public class PlayerPage : Gtk.Box {
                 ? "media-playback-pause-symbolic"
                 : "media-playback-start-symbolic";
 
-            // Resolve album art. Jellyfin gives a direct URL; bluetooth exposes
-            // none, so look one up from a public API by track metadata. Keyed on
-            // the track so we fetch at most once per song, not on every poll.
+            // Resolve album art once per track (Jellyfin gives a direct URL;
+            // bluetooth needs a metadata lookup). Keyed on the track so a change
+            // is detected cheaply on each poll.
             string track_key = info.art_url ?? "%s|%s|%s".printf (info.artist, info.album, info.title);
             if (track_key != current_track_key) {
                 current_track_key = track_key;
-                album_art.paintable = null;
-                string? art_url = info.art_url;
-                if (art_url == null && info.title != "")
-                    art_url = yield Artwork.lookup (info.artist, info.album, info.title);
-                // Guard against the track changing while the lookup was in flight.
-                if (art_url != null && current_track_key == track_key)
-                    yield load_image_async (art_url, album_art);
+                yield resolve_art (track_key, info);
             }
 
         } catch (Error e) {
@@ -176,7 +170,46 @@ public class PlayerPage : Gtk.Box {
         album_art.paintable = null;
     }
 
-    private async void load_image_async (string url, Gtk.Picture picture) {
+    // Show cover art for the current track: from the on-disk cache when
+    // available, otherwise resolve a URL, download it, and cache the result.
+    private async void resolve_art (string track_key, SessionInfo info) {
+        album_art.paintable = null;
+
+        var cached = ArtCache.load (track_key);
+        if (cached != null) {
+            set_art (cached);
+            return;
+        }
+
+        string? art_url = info.art_url;
+        if (art_url == null && info.title != "") {
+            try {
+                art_url = yield Artwork.lookup (info.artist, info.album, info.title);
+            } catch (Error e) {
+                warning ("Artwork lookup error: %s", e.message);
+                return;
+            }
+        }
+        // Guard against the track changing while the lookup was in flight.
+        if (art_url == null || current_track_key != track_key)
+            return;
+
+        var bytes = yield download (art_url);
+        if (bytes == null || current_track_key != track_key)
+            return;
+        ArtCache.store (track_key, bytes);
+        set_art (bytes);
+    }
+
+    private void set_art (Bytes bytes) {
+        try {
+            album_art.paintable = Gdk.Texture.from_bytes (bytes);
+        } catch (Error e) {
+            warning ("Failed to decode image: %s", e.message);
+        }
+    }
+
+    private async Bytes? download (string url) {
         try {
             var session = new Soup.Session ();
             session.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -185,14 +218,12 @@ public class PlayerPage : Gtk.Box {
 
             if (message.status_code != 200) {
                 warning ("Image HTTP error: %u", message.status_code);
-                return;
+                return null;
             }
-
-            var texture = Gdk.Texture.from_bytes (bytes);
-            picture.paintable = texture;
-
+            return bytes;
         } catch (Error e) {
             warning ("Failed to load image: %s", e.message);
+            return null;
         }
     }
 }
