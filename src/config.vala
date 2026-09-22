@@ -50,6 +50,10 @@ namespace Config {
     public const double VIS_PEAK_GRAVITY = 1.1;
 
     // Appearance.
+    // Columns used by the Wave and Scope styles. Each is one render node, so
+    // this trades silhouette smoothness against nodes per frame; 256 holds
+    // 55+ fps on the player box.
+    public const int VIS_CURVE_COLUMNS = 256;
     public const double VIS_BAR_GAP = 0.26;      // fraction of each bar's slot
     public const double VIS_BAR_RADIUS = 3.0;
     public const string VIS_COLOR_LOW = "#1d4ed8";

@@ -45,6 +45,17 @@ Everything is tunable from `src/config.vala` (`VIS_*`): band count, frequency
 range, colours, attack/decay, peak gravity and the frame cap. Analysis only runs
 while the page is visible, since GtkStack unmaps the pages you cannot see.
 
+Every style is built from render nodes — coloured rects, gradients and
+transforms. Nothing uses GskPath (which needs GTK 4.14; the player box runs
+Debian 12 with 4.8) and nothing uses `append_cairo`. That second one is
+measured, not stylistic: on the box, Cairo-drawn curves ran at 8.6 fps against
+56 for the rect-based styles, because `append_cairo` rasterises the full
+1920x480 on the CPU and uploads a 3.7 MB texture every frame. All five styles
+now hold 56–57 fps there.
+
+Run with `PLAYER_VIS_STATS=1` to print achieved frame rate and worst frame time
+every two seconds — useful when tuning `VIS_CURVE_COLUMNS` or `VIS_BANDS`.
+
 If the wrong thing gets visualised — this box runs EasyEffects, so the default
 sink may not be the one you mean — set `VIS_MONITOR_SOURCE` to a specific source
 from `pactl list short sources`.
