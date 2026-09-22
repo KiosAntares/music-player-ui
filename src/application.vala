@@ -4,6 +4,7 @@ using Gdk;
 public class PlayerApp : Gtk.Application {
     private Jellyfin jf;
     private Gtk.Stack stack;
+    private Visualizer visualizer;
 
     public PlayerApp () {
         GLib.Object (application_id: "com.example.player");
@@ -29,7 +30,7 @@ public class PlayerApp : Gtk.Application {
                     break;
                 case Gdk.Key.F:
                 case Gdk.Key.f:
-                   if (stack.visible_child_name == "cava") {
+                   if (stack.visible_child_name == "visualizer") {
                         stack.visible_child_name = "player";
                     } else if (stack.visible_child_name == "menu") {
                         stack.visible_child_name = "player";
@@ -38,7 +39,11 @@ public class PlayerApp : Gtk.Application {
                     }
                     break;
                 case Gdk.Key.g:
-                    stack.visible_child_name = "cava";
+                    // Jump to the audio display, or cycle its style if already there.
+                    if (stack.visible_child_name == "visualizer")
+                        visualizer.style = visualizer.style.next ();
+                    else
+                        stack.visible_child_name = "visualizer";
                     break;
                 case Gdk.Key.Left:
                     if (stack.visible_child_name == "player") {
@@ -73,9 +78,9 @@ public class PlayerApp : Gtk.Application {
         Style.apply ();
 
         var player_page = new PlayerPage (jf);
-        var cava = Cava.create_terminal ();
+        visualizer = new Visualizer ();
 
-        var menu_page = new MenuPage ();
+        var menu_page = new MenuPage (visualizer);
         menu_page.page_requested.connect ((page_name) => {
             stack.visible_child_name = page_name;
         });
@@ -85,7 +90,7 @@ public class PlayerApp : Gtk.Application {
         stack.margin_bottom = 20;
         stack.add_named (player_page, "player");
         stack.add_named (menu_page, "menu");
-        stack.add_named (cava, "cava");
+        stack.add_named (visualizer, "visualizer");
         stack.transition_type = Gtk.StackTransitionType.SLIDE_UP_DOWN;
         window.child = stack;
         window.present ();

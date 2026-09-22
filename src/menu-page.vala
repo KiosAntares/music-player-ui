@@ -1,4 +1,6 @@
 public class MenuPage : Gtk.Box {
+    private Visualizer visualizer;
+
     private Gtk.ListBox category_list;
     private Gtk.ListBox entry_list;
     private bool in_entries = false;
@@ -13,8 +15,9 @@ public class MenuPage : Gtk.Box {
 
     public signal void page_requested (string page_name);
 
-    public MenuPage () {
+    public MenuPage (Visualizer visualizer) {
         Object (orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
+        this.visualizer = visualizer;
 
         // Define your categories and entries
         data = new HashTable<string, GLib.List<string>> (str_hash, str_equal);
@@ -28,6 +31,7 @@ public class MenuPage : Gtk.Box {
         GLib.List<string> display_entries = new GLib.List<string> ();
         display_entries.append ("Player");
         display_entries.append ("Audio Display");
+        display_entries.append ("Visualizer Style");
         display_entries.append ("Lyrics");
         data.insert ("Display", (owned) display_entries);
 
@@ -148,6 +152,9 @@ public class MenuPage : Gtk.Box {
         if (entry == "Bluetooth") {
             return "Bluetooth: %s".printf (service_on (entry) ? "On" : "Off");
         }
+        if (entry == "Visualizer Style") {
+            return "Visualizer Style: %s".printf (visualizer.style.label ());
+        }
         return entry;
     }
 
@@ -190,8 +197,12 @@ public class MenuPage : Gtk.Box {
             var entry = row.get_data<string> ("entry");
             print ("Selected: %s\n", entry);
             if (entry == "Audio Display") {
-                page_requested ("cava");
+                page_requested ("visualizer");
             };
+            if (entry == "Visualizer Style") {
+                visualizer.style = visualizer.style.next ();
+                refresh_current_entries ();
+            }
             if (entry == "Poweroff"){
                 SystemActions.poweroff ();
             }

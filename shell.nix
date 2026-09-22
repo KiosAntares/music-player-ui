@@ -10,8 +10,8 @@ pkgs.mkShell {
     pkg-config
     vala
     json-glib
-    vte-gtk4
-    cava
+    libpulseaudio
+    pulseaudio      # pactl, used to follow the default sink
     libxml2
     x11vnc
 
